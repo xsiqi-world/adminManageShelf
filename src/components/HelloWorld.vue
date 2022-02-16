@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import Increasing from './increasing.vue'
+import { ref, provide } from 'vue'
+import Increasing from './Increasing.vue'
 import Heading from './Heading.vue'
 
 defineProps<{ msg: string }>()
@@ -9,12 +9,13 @@ const count = ref(0)
 
 const increasingNum = ref(10)
 const level = ref(1)
+provide('level', level.value)
 </script>
 
 <template>
   <h1>{{ msg }}</h1>
   <Increasing v-model:title="increasingNum"></Increasing>
-  <Heading :level="level">hello</Heading>
+  <Heading>hello</Heading>
   <p>
     Recommended IDE setup:
     <a href="https://code.visualstudio.com/" target="_blank">VSCode</a>

@@ -1,13 +1,18 @@
-<template>
-  <div></div>
-</template>
 
-<script lang="ts">
+<script lang="tsx">
+import { inject } from 'vue'
 export default {
   name: "Heading",
-  setup(props, { slots }) {
-    const tag = "h" + props.level;
-    // return () => <tag>{slots}</tag>
+  props: {
+    level: Number
+  },
+  setup(props: { level: void }, { slots }) {
+    console.log('level', props)
+    const level = inject('level');
+    const tag = "h" + level;
+
+    console.log('heading', level)
+    return () => <tag>{slots}</tag>
   },
 };
 </script>
