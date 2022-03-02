@@ -1,30 +1,29 @@
-<template>
-  <h2 @click="increasing()">计数器：{{ title }}</h2>
-</template>
 
 <script lang="tsx">
+import index from './test';
 import { ref, defineEmits, defineProps, defineComponent, inject } from "vue";
 export default defineComponent({
   props: {
-    title: Number,
+    num: Number,
   },
-  setup(props, context) {
-    console.log("props", props.title);
+  setup(props: {num: any}, context): () => JSX.Element {
+    const { num } = props;
+    console.log("props", num);
 
-    let location = inject('location');
-    console.log('increasing', location)
+    let level = inject('level');
+    console.log('increasing', level)
 
-    function increasing() {
-      context.emit("update:title", props.title + 1);
+    function increasing(): void {
+      context.emit("update:num", props.num as number + 1);
     }
 
-    // return {
-    //   increasing,
-    // };
-    return () => <div onClick={increasing}>计数器：{props.title}</div>
+    return () => <div onClick={increasing}>计数器：{props.num}</div>
   }
 });
 </script>
 
 <style lang="scss" scoped>
+div {
+  height: 500px;
+}
 </style>

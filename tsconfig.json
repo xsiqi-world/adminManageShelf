@@ -4,12 +4,15 @@
     "useDefineForClassFields": true,
     "module": "esnext",
     "moduleResolution": "node",
+    // 启用所有严格类型检查选项。
     "strict": true,
     "jsx": "preserve",
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "lib": ["esnext", "dom"]
+    "lib": ["esnext", "dom"],
+    // 在表达式和声明上有隐含的 any类型时报错。
+    "noImplicitAny": false
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }]

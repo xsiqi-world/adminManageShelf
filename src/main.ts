@@ -1,5 +1,10 @@
-import { createApp } from 'vue'
-import router from './router'
-import App from './App.vue'
+import { createApp } from 'vue';
+import router from './router';
+import ElementPlus from 'element-plus';
 
-createApp(App).use(router).mount('#app')
+import App from './App.vue';
+
+createApp(App)
+.use(router)
+.use(ElementPlus)
+.mount('#app');

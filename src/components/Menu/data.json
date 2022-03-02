@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "菜单1",
+    "children": [
+      {
+        "id": 3,
+        "name": "菜单1-1",
+        "children": [
+          {
+            "id": 5,
+            "name": "菜单1-1-1",
+            "path": "/test",
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "菜单2",
+    "children": [
+      {
+        "id": 4,
+        "name": "菜单2-1",
+        "path": "/about",
+        "children": []
+      }
+    ]
+  }
+]

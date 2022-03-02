@@ -5,11 +5,16 @@
     <h1>年龄：{{ state.age }}</h1>
     <h1>性别：{{ state.sex }}</h1>
     <h1>{{ state1 }}</h1>
+
+    <div>
+      <el-radio v-model="radio1" label="1" size="large">Option 1</el-radio>
+      <el-radio v-model="radio1" label="2" size="large">Option 2</el-radio>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { reactive } from "@vue/reactivity";
+import { reactive, ref } from "vue";
 export default {
   setup() {
     const state = reactive({
@@ -18,11 +23,13 @@ export default {
       sex: 1,
     });
 
-    const state1 = reactive(111);
+    const state1 = ref(111);
+    const radio1 = ref('1')
 
     return {
       state,
       state1,
+      radio1
     };
   },
 };

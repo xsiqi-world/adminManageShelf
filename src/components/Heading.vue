@@ -6,7 +6,7 @@ export default {
   props: {
     level: Number
   },
-  setup(props: { level: void }, { slots }) {
+  setup(props, { slots }): () => JSX.Element {
     console.log('level', props)
     const level = inject('level');
     const tag = "h" + level;
