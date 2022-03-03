@@ -1,10 +1,13 @@
 
 <script lang="tsx">
-import { inject } from 'vue'
+import { inject, PropType } from 'vue'
 export default {
   name: "Heading",
   props: {
-    level: Number
+    level: {
+      type: Number as PropType<number>,
+      default: 1
+    }
   },
   setup(props, { slots }): () => JSX.Element {
     console.log('level', props)

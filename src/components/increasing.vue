@@ -1,29 +1,34 @@
 
 <script lang="tsx">
-import index from './test';
-import { ref, defineEmits, defineProps, defineComponent, inject } from "vue";
+import { defineComponent, inject, PropType } from "vue";
 export default defineComponent({
   props: {
-    num: Number,
+    num: {
+      type: Number as PropType<number>,
+    },
   },
-  setup(props: {num: any}, context): () => JSX.Element {
+  setup(props, context): () => JSX.Element {
     const { num } = props;
     console.log("props", num);
 
     let level = inject('level');
     console.log('increasing', level)
 
+    // const slots = useSlots();
+
     function increasing(): void {
       context.emit("update:num", props.num as number + 1);
     }
 
-    return () => <div onClick={increasing}>计数器：{props.num}</div>
+    return () => <div onClick={increasing}>
+      计数器：{props.num}
+    </div>
   }
 });
 </script>
 
 <style lang="scss" scoped>
 div {
-  height: 500px;
+  height: 200px;
 }
 </style>

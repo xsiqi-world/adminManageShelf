@@ -1,46 +1,55 @@
 <template>
   <el-menu
-    :default-active="index"
+    :default-active="Number(index)"
     class="el-menu-vertical-demo"
     @select="handleSelect"
     active-text-color="#ffd04b"
     background-color="#545c64"
     text-color="#fff"
     unique-opened
+    router
+    :collapse="isCollapse"
   >
     <MenuItem :menuList="menuList"></MenuItem>
   </el-menu>
 </template>
 
-<script lang="ts" setup>
-import { ref, computed, onMounted } from "vue";
+<script lang="ts">
+import { onMounted, defineComponent } from "vue";
 import MenuItem from "./MenuItem.vue";
-import menuList from "./data.json";
+import menuListData from "./data.json";
 import { getSession, setSession } from "../../utils";
-import { useRouter, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
+import { menuItem } from "./types";
 
-console.log(menuList);
+export default defineComponent({
+  name: 'Menu',
+  setup() {
+    const index: string | null = getSession("menuIndex");
+    const route = useRoute();
+    const isCollapse = false;
 
-const index = Number(getSession("menuIndex"));
-const router = useRouter();
-const route = useRoute();
+    onMounted(() => {
+      console.log(route.query)
+    });
 
-onMounted(() => {
-  console.log(route.query)
-})
+    const handleSelect = (index: any): void => {
+      setSession("menuIndex", index);
+    };
 
-const handleSelect = (index: any, indexPath: any): void => {
-  setSession("menuIndex", index);
+    const menuList: menuItem[] = menuListData;
 
-  const findRoute = () => {
-    
+    return {
+      index,
+      handleSelect,
+      menuList,
+      MenuItem,
+      isCollapse
+    }
   }
+});
 
-  // router.push({
-  //   name: 'test',
-  //   path: "/test"
-  // });
-};
+
 </script>
 
 <style lang="scss" scoped>

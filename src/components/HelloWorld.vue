@@ -14,7 +14,9 @@ provide('level', level.value)
 
 <template>
   <h1>{{ msg }}</h1>
-  <Increasing v-model:num="increasingNum"></Increasing>
+  <Increasing v-model:num="increasingNum">
+    hello slot
+  </Increasing>
   <Heading>hello</Heading>
   <p>
     Recommended IDE setup:

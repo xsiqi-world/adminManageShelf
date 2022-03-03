@@ -4,10 +4,12 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "build:tsc": "vue-tsc --noEmit --skipLibCheck && vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^1.0.0",
     "@types/vue-router": "^2.0.0",
     "element-plus": "^2.0.4",
     "vue": "^3.2.25",

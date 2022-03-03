@@ -7,7 +7,7 @@ import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 
 function pathResolve (dir: string) {
-  return resolve(process.cwd(), './', dir)
+  return resolve(process.cwd(), '.', dir)
 }
 
 // https://vitejs.dev/config/
@@ -34,7 +34,7 @@ export default defineConfig({
   },
   build: {
     target: 'es2015',
-    chunkSizeWarningLimit: 2000,
+    chunkSizeWarningLimit: 500,
     rollupOptions: {
       input: {
         index: pathResolve('index.html')
@@ -44,7 +44,8 @@ export default defineConfig({
         entryFileNames: 'static/js/[name]-[hash].js',
         assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
       }
-    }
+    },
+    brotliSize: true
   },
   server: {
     proxy: {

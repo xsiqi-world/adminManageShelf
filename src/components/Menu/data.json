@@ -12,6 +12,12 @@
             "name": "菜单1-1-1",
             "path": "/test",
             "children": []
+          },
+          {
+            "id": 6,
+            "name": "菜单1-1-2",
+            "path": "/home",
+            "children": []
           }
         ]
       }

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "useDefineForClassFields": true,
+    // "useDefineForClassFields": true,
     "module": "esnext",
     "moduleResolution": "node",
     // 启用所有严格类型检查选项。
@@ -12,8 +12,31 @@
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
     // 在表达式和声明上有隐含的 any类型时报错。
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "isolatedModules": true,
+    "paths": {
+      "/@/*": ["src/*"],
+      "/#/*": ["types/*"]
+    },
+    "noLib": false,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "strictFunctionTypes": false,
+    "baseUrl": ".",
+    "allowJs": true,
+    "noUnusedLocals": false,// 若有未使用的局部变量则抛错。
+    "noUnusedParameters": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "types": ["vite/client"],
+    "removeComments": true
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": [
+    "src/**/*.ts", 
+    "src/**/*.d.ts", 
+    "src/**/*.tsx", 
+    "src/**/*.vue"
+  ],
+  "references": [{ "path": "./tsconfig.node.json" }],
+  "exclude": ["node_modules", "tests/server/**/*.ts", "dist", "**/*.js"]
 }
