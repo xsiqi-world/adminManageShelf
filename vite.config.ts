@@ -43,7 +43,16 @@ export default defineConfig({
         chunkFileNames: 'static/js/[name]-[hash].js',
         entryFileNames: 'static/js/[name]-[hash].js',
         assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
-      }
+        manualChunks(id) {
+          // https://rollupjs.org/guide/en/#outputmanualchunks
+          if (id.includes('node_modules')) {
+            // console.log(id.toString());
+            console.log(id.toString().split('node_modules/')[1]);
+            // console.log(id.toString().split('node_modules/')[1].split('/')[0].toString());
+            return id.toString().split('node_modules/')[1].split('/')[0].toString();
+          }
+        }
+      },
     },
     brotliSize: true
   },
@@ -66,5 +75,12 @@ export default defineConfig({
     Components({
       resolvers: [ElementPlusResolver()],
     }),
-  ]
+  ],
+  optimizeDeps: {
+    // @iconify/iconify: The dependency is dynamically and virtually loaded by @purge-icons/generated, so it needs to be specified explicitly
+    // include: [
+    //   '@element-plus/icons-vue',
+    //   'element-plus',
+    // ],
+  },
 })

@@ -34,5 +34,11 @@
         "children": []
       }
     ]
+  },
+  {
+    "id": 7,
+    "name": "菜单7",
+    "path": "/about",
+    "children": []
   }
 ]
