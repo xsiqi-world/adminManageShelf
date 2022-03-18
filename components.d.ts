@@ -6,7 +6,6 @@ declare module 'vue' {
   export interface GlobalComponents {
     BaseTable: typeof import('./src/components/BaseTable/index.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
-    ElCol: typeof import('element-plus/es')['ElCol']
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElIcon: typeof import('element-plus/es')['ElIcon']
@@ -14,13 +13,13 @@ declare module 'vue' {
     ElMenu: typeof import('element-plus/es')['ElMenu']
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
     ElPagination: typeof import('element-plus/es')['ElPagination']
-    ElRow: typeof import('element-plus/es')['ElRow']
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
     Heading: typeof import('./src/components/Heading.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Increasing: typeof import('./src/components/Increasing.vue')['default']
     Menu: typeof import('./src/components/Menu/index.vue')['default']
     MenuItem: typeof import('./src/components/Menu/MenuItem.vue')['default']
+    'MenuItem copy': typeof import('./src/components/Menu/MenuItem copy.vue')['default']
     Pagination: typeof import('./src/components/Pagination/index.vue')['default']
   }
 }

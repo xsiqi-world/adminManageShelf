@@ -18,7 +18,7 @@ const routes = [
   {
     path: '/main',
     name: 'main',
-    component: () => import('../pages/layout'),
+    component: () => import('../pages/layout/index'),
     // 只有经过身份验证的用户才能创建帖子
     meta: {
       requiresAuth: true,

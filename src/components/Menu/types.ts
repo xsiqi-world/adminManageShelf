@@ -1,6 +1,6 @@
-export interface menuItem {
-  id: number | string,
-  name: string,
-  children?: menuItem[],
-  path?: string
+export interface menuItem<T = any> {
+  id: number | string;
+  name: string;
+  children?: T[];
+  path?: string;
 }

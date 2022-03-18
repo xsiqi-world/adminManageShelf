@@ -14,7 +14,7 @@
           'breadcrumb',
           isCollapse ? 'rotate' : ''
         ]" @click="checkCollapse">
-          <el-icon :size="30"><expand /></el-icon>
+          <el-icon :size="30" color="#409EFC"><expand /></el-icon>
         </div>
         <div class="handle-container">
           <!-- <Menu class="handle" :list="handleMenuList" mode="horizontal"></Menu> -->
@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 import { getCurrentInstance, onMounted, ref } from 'vue';
-import Menu from '../components/Menu/index.vue';
+import Menu from '../../components/Menu/index.vue';
 
 const { proxy }: any = getCurrentInstance();
 const title = proxy.$title;
@@ -123,6 +123,7 @@ onMounted(() => {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 10px;
       @include headerWidthHeight;
 
       .breadcrumb {

@@ -1,19 +1,19 @@
 <template>
   <el-menu
-    :default-active="Number(index)"
+    :default-active="index"
     class="el-menu-vertical"
     @select="handleSelect"
     v-bind="$attrs"
-    unique-opened
     router
     :collapse="isCollapse"
   >
     <MenuItem :menuList="menuList"></MenuItem>
+    
   </el-menu>
 </template>
 
 <script lang="ts">
-import { onMounted, defineComponent, PropType, computed, reactive, toRefs } from 'vue';
+import { onMounted, defineComponent, PropType, toRefs } from 'vue';
 import MenuItem from './MenuItem.vue';
 import menuListData from './data.json';
 import { getSession, setSession } from '../../utils';
@@ -46,6 +46,24 @@ export default defineComponent({
     };
 
     const menuList: menuItem[] = list || menuListData;
+
+    const dps = (menuList) => {
+      menuList.map((item) => {
+        if (!/\-/.test(item.index)) {
+          item.index = item.id;
+        }
+        
+        if (item.children?.length > 0) {
+          for (let i = 0; i < item.children.length; i++) {
+            item.children[i].index = item.index + '-' + item.children[i].id;
+          }
+          dps(item.children);
+        }
+        return item;
+      })
+    }
+
+    dps(menuList);
 
     return {
       index,

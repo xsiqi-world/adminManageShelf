@@ -1,28 +1,31 @@
 <template>
-  <div class="menu-item" v-for="(item, key) in menuList" v-bind:key="key">
-    <el-sub-menu v-if="item.children && item.children.length > 0" :index="item.id">
-      <template #title>
-        <el-icon :size="20"><location /></el-icon>
-        <span>{{ item.name }}</span>
-      </template>
+  <el-sub-menu 
+    v-for="(item, key) in parentList" 
+    v-bind:key="key" 
+    :index="item.index"
+  >
+    <template #title>
+      <el-icon :size="20"><location /></el-icon>
+      <span>{{ item.name }}</span>
+    </template>
 
-      <MenuItem :menuList="item.children"></MenuItem>
-    </el-sub-menu>
-    <el-menu-item
-      v-if="!item.children || item.children.length == 0"
-      :index="item.id"
-      :route="{
-        path: item.path,
-      }"
-    >
-      <el-icon><setting /></el-icon>
-      <template #title>{{ item.name }}</template>
-    </el-menu-item>
-  </div>
+    <MenuItem v-if="item.children && item.children.length > 0" :menuList="item.children"></MenuItem>
+  </el-sub-menu>
+  <el-menu-item
+    v-for="(item, key) in childList"
+    v-bind:key="key"
+    :index="item.index"
+    :route="{
+      path: item.path,
+    }"
+  >
+    <el-icon><setting /></el-icon>
+    <template #title>{{ item.name }}</template>
+  </el-menu-item>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { computed, defineComponent, PropType } from 'vue';
 import { menuItem } from './types';
 
 export default defineComponent({
@@ -36,12 +39,20 @@ export default defineComponent({
   setup(props) {
     const { menuList } = props;
 
+    const parentList = computed(() => {
+      return menuList.filter(item => item.children && item.children.length > 0);
+    });
+
+    const childList = computed(() => {
+      return menuList.filter(item => !item.children || item.children.length === 0);
+    });
+
     return {
-      menuList
+      parentList,
+      childList,
     };
   },
 });
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

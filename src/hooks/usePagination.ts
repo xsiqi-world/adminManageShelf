@@ -18,7 +18,7 @@ function pagination<T = any> (list: T[], pageNum: number, pageSize: number): T[]
 }
 
 /**
- * 接口分页
+ * 分页hooks
  * @param list 数据list
  * @param pageSize 每页条数
  * @returns 
