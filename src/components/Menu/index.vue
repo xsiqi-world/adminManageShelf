@@ -6,9 +6,9 @@
     v-bind="$attrs"
     router
     :collapse="isCollapse"
+    unique-opened
   >
     <MenuItem :menuList="menuList"></MenuItem>
-    
   </el-menu>
 </template>
 
@@ -16,12 +16,15 @@
 import { onMounted, defineComponent, PropType, toRefs } from 'vue';
 import MenuItem from './MenuItem.vue';
 import menuListData from './data.json';
-import { getSession, setSession } from '../../utils';
+import { getSession, setSession } from '/@/utils';
 import { useRoute } from 'vue-router';
 import { menuItem } from './types';
 
 export default defineComponent({
   name: 'Menu',
+  components: {
+    MenuItem
+  },
   props: {
     list: {
       type: Array as PropType<menuItem[]>
@@ -41,16 +44,16 @@ export default defineComponent({
       console.log(route.query);
     });
 
-    const handleSelect = (index: any): void => {
-      setSession('menuIndex', index);
+    const handleSelect = (index: string): void => {
+      return setSession('menuIndex', index);
     };
 
     const menuList: menuItem[] = list || menuListData;
 
     const dps = (menuList) => {
-      menuList.map((item) => {
+      menuList.forEach((item) => {
         if (!/\-/.test(item.index)) {
-          item.index = item.id;
+          item.index = '' + item.id;
         }
         
         if (item.children?.length > 0) {
@@ -59,7 +62,6 @@ export default defineComponent({
           }
           dps(item.children);
         }
-        return item;
       })
     }
 
@@ -69,7 +71,6 @@ export default defineComponent({
       index,
       handleSelect,
       menuList,
-      MenuItem,
       isCollapse,
     };
   },

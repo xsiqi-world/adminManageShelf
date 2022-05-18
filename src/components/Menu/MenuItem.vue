@@ -39,17 +39,17 @@ export default defineComponent({
   setup(props) {
     const { menuList } = props;
 
-    const parentList = computed(() => {
+    const parentList = computed<menuItem[]>(() => {
       return menuList.filter(item => item.children && item.children.length > 0);
     });
 
-    const childList = computed(() => {
+    const childList = computed<menuItem[]>(() => {
       return menuList.filter(item => !item.children || item.children.length === 0);
     });
 
     return {
       parentList,
-      childList,
+      childList
     };
   },
 });

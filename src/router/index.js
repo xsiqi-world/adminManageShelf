@@ -33,9 +33,9 @@ const routes = [
         },
       },
       {
-        path: '/test',
-        name: 'test',
-        component: () => import('../components/HelloWorld'),
+        path: '/role',
+        name: 'role',
+        component: () => import('../pages/role/index'),
       },
       {
         path: '/about',
@@ -51,6 +51,7 @@ const router = createRouter({
   routes,
 });
 
+// 跳转前检查
 router.beforeEach((to, from) => {
   // 而不是去检查每条路由记录
   // to.matched.some(record => record.meta.requiresAuth)

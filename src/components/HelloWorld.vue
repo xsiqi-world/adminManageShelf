@@ -3,7 +3,9 @@ import { ref, provide } from 'vue'
 import Increasing from './Increasing.vue'
 import Heading from './Heading.vue'
 
-defineProps<{ msg: string }>()
+const props = withDefaults(defineProps<{ msg: string }>(), {
+  msg: 'hello world'
+})
 
 const count = ref(0)
 

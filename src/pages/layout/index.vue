@@ -5,7 +5,12 @@
         {{ title }}
       </div>
       <div class="menu">
-        <Menu active-text-color="#ffd04b" background-color="#545c64" text-color="#fff" v-model:isCollapse="isCollapse"></Menu>
+        <Menu 
+          active-text-color="#ffd04b" 
+          background-color="#545c64" 
+          text-color="#fff" 
+          v-model:isCollapse="isCollapse"
+        ></Menu>
       </div>
     </div>
     <div class="home-right">
@@ -18,6 +23,7 @@
         </div>
         <div class="handle-container">
           <!-- <Menu class="handle" :list="handleMenuList" mode="horizontal"></Menu> -->
+          个人信息
         </div>
       </div>
 
@@ -34,9 +40,10 @@
 </template>
 
 <script setup lang="ts">
-import { getCurrentInstance, onMounted, ref } from 'vue';
-import Menu from '../../components/Menu/index.vue';
+import { getCurrentInstance, onMounted, onUnmounted, ref } from 'vue';
+import { Menu } from '../../components/index';
 
+// 获取全局数据
 const { proxy }: any = getCurrentInstance();
 const title = proxy.$title;
 const isCollapse = ref(false);
@@ -60,27 +67,34 @@ const handleMenuList = [
   },
 ];
 
+function resize() {
+  const html: HTMLElement = document.querySelector('html') as HTMLElement;
+  let timer: any = null;
+  return () => {
+    if (timer) return;
+    timer = setTimeout(() => {
+      if (html?.clientWidth < 900) {
+        console.log('小于900')
+        isCollapse.value = true;
+      } else {
+        console.log('大于900')
+        isCollapse.value = false;
+      }
+      timer = null;
+    }, 500);
+  }
+}
+
 onMounted(() => {
+  console.log('组件加载')
   //resize：屏幕的大小发生改变就触发监听事件resetrem
   window.addEventListener("resize", resize());
-
-  function resize() {
-    const html: HTMLElement = document.querySelector('html') as HTMLElement;
-    let timer: any = null;
-    return () => {
-      if (timer) return;
-      timer = setTimeout(() => {
-        if (html?.clientWidth < 900) {
-          console.log('小于900')
-        } else {
-          console.log('大于900')
-        }
-        timer = null;
-      }, 500);
-    }
-  }
 })
 
+onUnmounted(() => {
+  console.log('组件卸载')
+  window.removeEventListener("resize", resize());
+})
 
 </script>
 

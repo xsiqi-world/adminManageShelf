@@ -46,21 +46,21 @@
       </el-table-column>
     </el-table>
 
-    <pagination
+    <Pagination
+      class="pag"
       v-if="tableData.length > 0 && paginationShow"
       :style="{ width: width }"
       :total="total"
       v-model:page="currentPage"
       v-model:limit="pageSizes"
       :auto-scroll="false"
-      class="pag"
       @pagination="getList"
     />
   </div>
 </template>
 
 <script>
-import Pagination from '@/components/Pagination';
+import { Pagination } from '/@/components';
 
 export default {
   name: 'CustomerTable',
@@ -80,7 +80,6 @@ export default {
       type: Array,
       default: () => [],
     },
-
     paginationShow: {
       type: Boolean,
       default: true,

@@ -4,10 +4,6 @@
     <h1>姓名：{{ state.name }}</h1>
     <h1>年龄：{{ state.age }}</h1>
     <h1>性别：{{ state.sex }}</h1>
-    <el-pagination 
-    layout="prev, pager, next" 
-    :total="1000"
-    ></el-pagination>
   </div>
 </template>
 

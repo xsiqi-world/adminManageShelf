@@ -10,7 +10,7 @@
           {
             "id": 5,
             "name": "菜单1-1-1",
-            "path": "/test"
+            "path": "/role"
           },
           {
             "id": 6,
@@ -31,10 +31,5 @@
         "path": "/about"
       }
     ]
-  },
-  {
-    "id": 7,
-    "name": "菜单7",
-    "path": "/about"
   }
 ]

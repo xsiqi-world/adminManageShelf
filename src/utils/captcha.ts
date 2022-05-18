@@ -14,7 +14,7 @@ export default class GVerify {
     };
     if (Object.prototype.toString.call(options) == '[object Object]') {
       //判断传入参数类型
-      for (var i in options) {
+      for (let i in options) {
         //根据传入的参数，修改默认参数值
         this.options[i] = options[i];
       }
@@ -91,7 +91,7 @@ export default class GVerify {
       ctx.translate(-x, -y);
     }
     /**绘制干扰线**/
-    for (var i = 0; i < 4; i++) {
+    for (let i = 0; i < 4; i++) {
       ctx.strokeStyle = randomColor(40, 180);
       ctx.beginPath();
       ctx.moveTo(randomNum(0, this.options.width), randomNum(0, this.options.height));

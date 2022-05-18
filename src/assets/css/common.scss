@@ -1,4 +1,6 @@
-html,body,#app{
+html,
+body,
+#app {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -6,43 +8,41 @@ html,body,#app{
   /* min-width: 1366px; */
 }
 
-.el-breadcrumb{
+.el-breadcrumb {
   margin-bottom: 15px;
   font-size: 12px;
 }
 
-.el-card{
+.el-card {
   /* 当本身的样式权重较高时候加上!important */
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15) !important;
 }
 
-.el-table{
+.el-table {
   margin-top: 15px;
   font-size: 12px;
 }
 
-.el-pagination{
+.el-pagination {
   margin-top: 15px;
 }
 
-.batch-button{
+.batch-button {
   margin-top: 15px;
 }
 
 /* 步骤条 */
-.el-steps{
+.el-steps {
   margin: 15px 0;
 }
-.el-step__title{
+.el-step__title {
   font-size: 13px;
 }
 
 /* 富文本编辑器样式 */
-.ql-editor{
+.ql-editor {
   min-height: 300px;
 }
-
-
 
 /* .bor-gray {
   border: 1px solid #e5e5e5;
