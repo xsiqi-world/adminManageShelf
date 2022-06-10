@@ -1,3 +1,5 @@
+import type { App } from "vue";
+
 // 设置session
 export function setSession(key: string, val: string) {
   return sessionStorage.setItem(key, val);
@@ -49,3 +51,15 @@ function move(amount) {
 //   }
 //   animateScroll();
 // }
+
+export const withInstall = <T>(component: T, alias?: string) => {
+  const comp = component as any;
+  comp.install = function(app: App) {
+    app.component(comp.name, comp);
+    if (alias) {
+      app.config.globalProperties[alias] = component;
+    }
+  }
+
+  return comp as T;
+}

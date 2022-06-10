@@ -30,6 +30,7 @@ const routes = [
         component: () => import('../pages/home/index'),
         meta: {
           requiresAuth: true,
+          keepAlive: true
         },
       },
       {

@@ -1,7 +1,6 @@
-import Menu from './index.vue';
+import { withInstall } from '/@/utils/index';
+import menu from './src/Menu.vue';
+import menuItem from './src/Menu.vue';
 
-Menu.install = function(Vue) {
-  Vue.comments(Menu.name, Menu);
-}
-
-export default Menu;
+export const Menu = withInstall(menu);
+export const MenuItem = withInstall(menuItem);

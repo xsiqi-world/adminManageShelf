@@ -15,10 +15,10 @@
 <script lang="ts">
 import { onMounted, defineComponent, PropType, toRefs } from 'vue';
 import MenuItem from './MenuItem.vue';
-import menuListData from './data.json';
+import menuListData from '../data.json';
 import { getSession, setSession } from '/@/utils';
 import { useRoute } from 'vue-router';
-import { menuItem } from './types';
+import { menuItem } from '../types/index';
 
 export default defineComponent({
   name: 'Menu',

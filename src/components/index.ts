@@ -1,9 +1,10 @@
-import Pagination from "./Pagination/index";
-import Menu from "./Menu/index";
+import { Pagination } from "./Pagination/index";
+import { Menu } from "./Menu/index";
 
 const install = (app, options) => {
   app.use(Pagination);
   app.use(Menu);
+  console.log(options);
 }
 
 const TUI = {

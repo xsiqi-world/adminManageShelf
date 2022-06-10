@@ -35,9 +35,7 @@ export default defineComponent({
     },
     pageSizes: {
       type: Array as PropType<number[]>,
-      default() {
-        return [20, 30, 50];
-      },
+      default: () => [20, 30, 50],
     },
     layout: {
       type: String as PropType<string>,
@@ -57,25 +55,7 @@ export default defineComponent({
     },
   },
   setup(props, ctx) {
-    const {
-      background,
-      layout,
-      autoScroll,
-      page,
-      limit,
-      total,
-      pageSizes,
-      hidden
-    } = toRefs<{
-      background: boolean,
-      layout: string,
-      autoScroll: boolean,
-      page: Ref<number>,
-      limit: Ref<number>,
-      total: number,
-      pageSizes: number[],
-      hidden: boolean
-    }>(props);
+    const { page, limit, autoScroll } = toRefs(props);
 
     const handleCurrentChange = (val) => {
       ctx.emit('pagination', { page: val, limit: limit.value });
@@ -99,16 +79,6 @@ export default defineComponent({
       handleSizeChange,
       handleCurrentChange,
       ...toRefs(props),
-      // autoScroll,
-      // background,
-      // layout,
-      // page,
-      // limit,
-      // total,
-      // pageSizes,
-      // hidden,
-      // currentPage,
-      // pageSize
     }
   }
 });

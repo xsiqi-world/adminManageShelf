@@ -10,10 +10,12 @@
       :total="100"
       :pageSizes="[10, 20, 30]"
     ></Pagination>
+
+    <button @click="checkLimit">切换limit</button>
   </div>
 </template>
 
-<script lang="tsx">
+<script lang="ts">
 import { ref, defineComponent, inject, PropType, toRefs } from 'vue';
 import { Pagination } from './index';
 export default defineComponent({
@@ -35,6 +37,7 @@ export default defineComponent({
     // const slots = useSlots();
 
     function increasing(): void {
+      console.log(111)
       context.emit('update:num', (props.num as number) + 1);
     }
 
@@ -55,12 +58,17 @@ export default defineComponent({
     }
     getList();
 
+    const checkLimit = () => {
+      limit.value = 20;
+    }
+
     return {
       page,
       limit,
       increasing,
       pagination,
-      num: props.num
+      num,
+      checkLimit
     }
 
     // return () => (

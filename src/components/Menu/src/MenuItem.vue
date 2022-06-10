@@ -9,6 +9,7 @@
       <span>{{ item.name }}</span>
     </template>
 
+    <!-- 递归组件 -->
     <MenuItem v-if="item.children && item.children.length > 0" :menuList="item.children"></MenuItem>
   </el-sub-menu>
   <el-menu-item
@@ -26,7 +27,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType } from 'vue';
-import { menuItem } from './types';
+import { menuItem } from '../types/index';
 
 export default defineComponent({
   name: 'MenuItem',
