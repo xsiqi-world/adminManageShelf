@@ -5,34 +5,30 @@
         {{ title }}
       </div>
       <div class="menu">
-        <Menu 
-          active-text-color="#ffd04b" 
-          background-color="#545c64" 
-          text-color="#fff" 
+        <Menu
+          active-text-color="#ffd04b"
+          background-color="#545c64"
+          text-color="#fff"
           v-model:isCollapse="isCollapse"
         ></Menu>
       </div>
     </div>
     <div class="home-right">
       <div class="main-header">
-        <div :class="[
-          'breadcrumb',
-          isCollapse ? 'rotate' : ''
-        ]" @click="checkCollapse">
+        <div :class="['breadcrumb', isCollapse ? 'rotate' : '']" @click="checkCollapse">
           <el-icon :size="30" color="#409EFC"><expand /></el-icon>
         </div>
         <div class="handle-container">
-          <!-- <Menu class="handle" :list="handleMenuList" mode="horizontal"></Menu> -->
-          个人信息
+          <UserInfo></UserInfo>
         </div>
       </div>
 
       <div class="main-container">
         <div class="main">
-          <router-view></router-view>
+          <slot></slot>
         </div>
         <div class="footer">
-          footer
+          <Footer></Footer>
         </div>
       </div>
     </div>
@@ -41,7 +37,9 @@
 
 <script setup lang="ts">
 import { getCurrentInstance, onMounted, onUnmounted, ref } from 'vue';
-import { Menu } from '../../components/index';
+import { Menu } from '/@/components/index';
+import Footer from './components/footer.vue';
+import UserInfo from './components/userInfo.vue';
 
 // 获取全局数据
 const { proxy }: any = getCurrentInstance();
@@ -50,7 +48,7 @@ const isCollapse = ref(false);
 
 const checkCollapse = () => {
   isCollapse.value = !isCollapse.value;
-}
+};
 
 const handleMenuList = [
   {
@@ -74,28 +72,27 @@ function resize() {
     if (timer) return;
     timer = setTimeout(() => {
       if (html?.clientWidth < 900) {
-        console.log('小于900')
+        console.log('小于900');
         isCollapse.value = true;
       } else {
-        console.log('大于900')
+        console.log('大于900');
         isCollapse.value = false;
       }
       timer = null;
     }, 500);
-  }
+  };
 }
 
 onMounted(() => {
-  console.log('组件加载')
+  console.log('组件加载');
   //resize：屏幕的大小发生改变就触发监听事件resetrem
-  window.addEventListener("resize", resize());
-})
+  window.addEventListener('resize', resize());
+});
 
 onUnmounted(() => {
-  console.log('组件卸载')
-  window.removeEventListener("resize", resize());
-})
-
+  console.log('组件卸载');
+  window.removeEventListener('resize', resize());
+});
 </script>
 
 <style lang="scss" scoped>
@@ -120,6 +117,9 @@ onUnmounted(() => {
       @include back;
       @include headerWidthHeight;
       text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .menu {
@@ -141,7 +141,7 @@ onUnmounted(() => {
       @include headerWidthHeight;
 
       .breadcrumb {
-        transition: .3s all;
+        transition: 0.3s all;
         &.rotate {
           transform: rotate(90deg);
         }

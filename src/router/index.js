@@ -16,34 +16,28 @@ const routes = [
   //   component: () => import('../pages/login/index'),
   // },
   {
-    path: '/main',
-    name: 'main',
-    component: () => import('../pages/layout/index'),
+    path: '/home',
+    name: 'home',
+    component: () => import('../pages/home/index'),
     // 只有经过身份验证的用户才能创建帖子
     meta: {
       requiresAuth: true,
+      keepAlive: true
     },
-    children: [
-      {
-        path: '/home',
-        name: 'home',
-        component: () => import('../pages/home/index'),
-        meta: {
-          requiresAuth: true,
-          keepAlive: true
-        },
-      },
-      {
-        path: '/role',
-        name: 'role',
-        component: () => import('../pages/role/index'),
-      },
-      {
-        path: '/about',
-        name: 'About',
-        component: () => import('../pages/about/index'),
-      },
-    ],
+    children: [],
+  },
+  {
+    path: '/role',
+    name: 'role',
+    component: () => import('../pages/role/index'),
+    meta: {
+      keepAlive: true
+    },
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: () => import('../pages/about/index'),
   },
 ];
 
@@ -65,8 +59,8 @@ router.beforeEach((to, from) => {
   //     query: { redirect: to.fullPath },
   //   }
   // }
-  console.log(to);
-  console.log(to.meta);
+  console.log('to', to);
+  console.log('meta', to.meta);
   // return false;
 });
 

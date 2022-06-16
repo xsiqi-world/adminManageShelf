@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { onMounted, defineComponent, PropType, toRefs } from 'vue';
-import MenuItem from './MenuItem.vue';
+import MenuItem from './components/MenuItem.vue';
 import menuListData from '../data.json';
 import { getSession, setSession } from '/@/utils';
 import { useRoute } from 'vue-router';
@@ -50,7 +50,7 @@ export default defineComponent({
 
     const menuList: menuItem[] = list || menuListData;
 
-    const dps = (menuList) => {
+    const dfs = (menuList) => {
       menuList.forEach((item) => {
         if (!/\-/.test(item.index)) {
           item.index = '' + item.id;
@@ -60,12 +60,12 @@ export default defineComponent({
           for (let i = 0; i < item.children.length; i++) {
             item.children[i].index = item.index + '-' + item.children[i].id;
           }
-          dps(item.children);
+          dfs(item.children);
         }
       })
     }
 
-    dps(menuList);
+    dfs(menuList);
 
     return {
       index,

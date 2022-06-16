@@ -74,13 +74,13 @@ export default {
 
     // 获取验证码
     const getCaptcha = () => {};
-    //重置登录表单
+    // 重置登录表单
     const resetForm = (formEl) => {
       if (!formEl) return;
       formEl.resetFields();
     }
 
-    //表单验证登陆
+    // 表单验证登陆
     const doLogin = () => {
       const valid = verifyCode.validate(loginForm.captcha);
       if (valid) {

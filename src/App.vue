@@ -1,24 +1,24 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useRouter, useRoute } from 'vue-router';
+import { Layout } from '/@/components/Layout';
+
+const route = useRoute();
+console.log('route', route.path);
+</script>
 
 <template>
-  <router-view></router-view>
+  <layout v-if="!['/', '/login'].includes(route.path)">
+    <router-view v-slot="{ Component, route }">
+      <keep-alive>
+        <component v-if="$route.meta.keepAlive" :is="Component" :key="$route.name"></component>
+      </keep-alive>
+      <component v-if="!$route.meta.keepAlive" :is="Component" :key="$route.name"></component>
+    </router-view>
+  </layout>
+  <router-view v-else></router-view>
 </template>
 
 <style lang="scss">
-html,
-body,
-ul,
-li,
-p,
-h1,
-h2,
-h3,
-form,
-img {
-  margin: 0;
-  padding: 0;
-}
-
 /* 让元素内边距padding和外边距margin和边框border不超过宽高 */
 * {
   box-sizing: border-box;

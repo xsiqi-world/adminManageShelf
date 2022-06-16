@@ -27,7 +27,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType } from 'vue';
-import { menuItem } from '../types/index';
+import { menuItem } from '../../types/index';
 
 export default defineComponent({
   name: 'MenuItem',
@@ -40,11 +40,11 @@ export default defineComponent({
   setup(props) {
     const { menuList } = props;
 
-    const parentList = computed<menuItem[]>(() => {
+    const parentList = computed(() => {
       return menuList.filter(item => item.children && item.children.length > 0);
     });
 
-    const childList = computed<menuItem[]>(() => {
+    const childList = computed(() => {
       return menuList.filter(item => !item.children || item.children.length === 0);
     });
 

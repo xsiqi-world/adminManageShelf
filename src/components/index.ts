@@ -1,9 +1,15 @@
 import { Pagination } from "./Pagination/index";
 import { Menu } from "./Menu/index";
 
+const components = {
+  Pagination,
+  Menu
+};
+
 const install = (app, options) => {
-  app.use(Pagination);
-  app.use(Menu);
+  for (let key in components) {
+    app.use(components[key]);
+  }
   console.log(options);
 }
 
