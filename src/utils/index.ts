@@ -63,3 +63,16 @@ export const withInstall = <T>(component: T, alias?: string) => {
 
   return comp as T;
 }
+
+
+// 节流函数
+export const throttle = function(fn, delay: number = 500) {
+  let timer: any = null;
+  return function() {
+    if (timer) return;
+    timer = setTimeout(() => {
+      fn && fn.apply(this, arguments);
+      timer = null;
+    }, delay);
+  }
+}

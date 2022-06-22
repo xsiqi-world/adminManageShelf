@@ -47,6 +47,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { onMounted, reactive, ref } from 'vue';
 import { ElForm, ElMessage } from 'element-plus';
 import GVerify from '/@/utils/captcha';
+import { setSession } from '/@/utils/index';
 
 export default {
   name: 'Login',
@@ -84,6 +85,7 @@ export default {
     const doLogin = () => {
       const valid = verifyCode.validate(loginForm.captcha);
       if (valid) {
+        setSession('AccessToken', loginForm.username);
         router.push({
           name: 'home',
           path: '/home',

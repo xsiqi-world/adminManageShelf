@@ -7,14 +7,14 @@ console.log('route', route.path);
 </script>
 
 <template>
-  <layout v-if="!['/', '/login'].includes(route.path)">
+  <Layout v-if="!['/', '/login'].includes(route.path)">
     <router-view v-slot="{ Component, route }">
       <keep-alive>
         <component v-if="$route.meta.keepAlive" :is="Component" :key="$route.name"></component>
       </keep-alive>
       <component v-if="!$route.meta.keepAlive" :is="Component" :key="$route.name"></component>
     </router-view>
-  </layout>
+  </Layout>
   <router-view v-else></router-view>
 </template>
 

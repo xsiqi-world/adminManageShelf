@@ -19,7 +19,7 @@
           <el-icon :size="30" color="#409EFC"><expand /></el-icon>
         </div>
         <div class="handle-container">
-          <UserInfo></UserInfo>
+          <LayoutUserInfo></LayoutUserInfo>
         </div>
       </div>
 
@@ -28,7 +28,7 @@
           <slot></slot>
         </div>
         <div class="footer">
-          <Footer></Footer>
+          <LayoutFooter></LayoutFooter>
         </div>
       </div>
     </div>
@@ -38,8 +38,8 @@
 <script setup lang="ts">
 import { getCurrentInstance, onMounted, onUnmounted, ref } from 'vue';
 import { Menu } from '/@/components/index';
-import Footer from './components/footer.vue';
-import UserInfo from './components/userInfo.vue';
+import LayoutFooter from './components/LayoutFooter.vue';
+import LayoutUserInfo from './components/LayoutUserInfo.vue';
 
 // 获取全局数据
 const { proxy }: any = getCurrentInstance();

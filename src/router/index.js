@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router';
+import { getSession } from '/@/utils';
 
 const routes = [
   {
@@ -21,7 +22,6 @@ const routes = [
     component: () => import('../pages/home/index'),
     // 只有经过身份验证的用户才能创建帖子
     meta: {
-      requiresAuth: true,
       keepAlive: true
     },
     children: [],
@@ -31,13 +31,31 @@ const routes = [
     name: 'role',
     component: () => import('../pages/role/index'),
     meta: {
-      keepAlive: true
+      keepAlive: true,
     },
   },
   {
     path: '/about',
-    name: 'About',
+    name: 'about',
     component: () => import('../pages/about/index'),
+    meta: {
+      keepAlive: true,
+    },
+  },
+  {
+    path: '/test',
+    name: 'test',
+    component: () => import('../pages/about/index'),
+    meta: {
+      keepAlive: true,
+      requiresAuth: true,
+    },
+  },
+  {
+    path: '/formMarking',
+    name: 'formMarking',
+    component: () => import('../pages/formMarking/index'),
+    meta: {},
   },
 ];
 
@@ -46,19 +64,35 @@ const router = createRouter({
   routes,
 });
 
+const roles = [
+  {
+    id: 1,
+    path: '/role'
+  },
+  {
+    id: 2,
+    path: '/home'
+  },
+  {
+    id: 3,
+    path: '/about'
+  }
+]
+
 // 跳转前检查
 router.beforeEach((to, from) => {
   // 而不是去检查每条路由记录
   // to.matched.some(record => record.meta.requiresAuth)
   // if (to.meta.requiresAuth && !auth.isLoggedIn()) {
-  //   // 此路由需要授权，请检查是否已登录
-  //   // 如果没有，则重定向到登录页面
-  //   return {
-  //     path: '/login',
-  //     // 保存我们所在的位置，以便以后再来
-  //     query: { redirect: to.fullPath },
-  //   }
-  // }
+  if (to.meta.requiresAuth && getSession('AccessToken')) {
+    // 此路由需要授权，请检查是否已登录
+    // 如果没有，则重定向到登录页面
+    return {
+      path: '/login',
+      // 保存我们所在的位置，以便以后再来
+      query: { redirect: to.fullPath },
+    }
+  }
   console.log('to', to);
   console.log('meta', to.meta);
   // return false;

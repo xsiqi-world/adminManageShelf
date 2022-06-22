@@ -14,18 +14,15 @@ declare module 'vue' {
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
     ElPagination: typeof import('element-plus/es')['ElPagination']
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
-    Footer: typeof import('./src/components/Layout/src/components/footer.vue')['default']
     Heading: typeof import('./src/components/Heading.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Increasing: typeof import('./src/components/Increasing.vue')['default']
+    LayoutFooter: typeof import('./src/components/Layout/src/components/LayoutFooter.vue')['default']
+    LayoutUserInfo: typeof import('./src/components/Layout/src/components/LayoutUserInfo.vue')['default']
     Menu: typeof import('./src/components/Menu/src/Menu.vue')['default']
     MenuItem: typeof import('./src/components/Menu/src/components/MenuItem.vue')['default']
     'MenuItem copy': typeof import('./src/components/Menu/MenuItem copy.vue')['default']
-    Pagination: typeof import('./src/components/Pagination/index.vue')['default']
-    Src: typeof import('./src/components/Pagination/src/index.vue')['default']
-    User: typeof import('./src/components/Layout/src/user.vue')['default']
-    UserInfo: typeof import('./src/components/Layout/src/components/userInfo.vue')['default']
-    UserOperation: typeof import('./src/components/Layout/src/userOperation.vue')['default']
+    Src: typeof import('./src/components/FormMarking/src/index.vue')['default']
   }
 }
 

@@ -29,7 +29,8 @@
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "types": ["vite/client"],
-    "removeComments": true
+    "removeComments": true,
+    "noImplicitThis": false // “‘this”隐式具有类型“any”，因为它没有类型批注
   },
   "include": [
     "src/**/*.ts", 
