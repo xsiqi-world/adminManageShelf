@@ -1,0 +1,15 @@
+{
+  "width": 500,
+  "name": "name",
+  "title": "Activity name",
+  "value": "hello",
+  "className": [],
+  "require": true,
+  "operation": [
+    {
+      "title": "禁用",
+      "attr": "disabled",
+      "value": false
+    }
+  ]
+}

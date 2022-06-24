@@ -17,6 +17,7 @@ declare module 'vue' {
     Heading: typeof import('./src/components/Heading.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Increasing: typeof import('./src/components/Increasing.vue')['default']
+    Input: typeof import('./src/components/FormMarking/src/components/input.vue')['default']
     LayoutFooter: typeof import('./src/components/Layout/src/components/LayoutFooter.vue')['default']
     LayoutUserInfo: typeof import('./src/components/Layout/src/components/LayoutUserInfo.vue')['default']
     Menu: typeof import('./src/components/Menu/src/Menu.vue')['default']
