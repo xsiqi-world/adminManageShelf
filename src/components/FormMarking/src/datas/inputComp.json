@@ -1,8 +1,8 @@
 {
-  "width": 500,
+  "type": "text",
+  "width": 150,
   "name": "name",
   "title": "Activity name",
-  "value": "hello",
   "className": [],
   "require": true,
   "operation": [

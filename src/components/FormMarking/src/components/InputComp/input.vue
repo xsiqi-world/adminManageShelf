@@ -13,26 +13,29 @@ export default defineComponent({
     },
   },
   setup(props, { slots, attrs, emit }) {
-    const { itemConfig } = props;
-    const { itemValue } = toRefs(props);
+    const { itemConfig, itemValue } = toRefs(props);
+    const testValue = ref();
     const ElFormItem = resolveComponent('ElFormItem');
     const ElInput = resolveComponent('ElInput');
+
+    console.log('hh',itemConfig.value)
 
     return () =>
       h(
         ElFormItem,
         {
-          label: '11',
+          label: itemConfig?.value?.title,
         },
         () => [
           h(ElInput, {
-            style: ['width', 'height']
-              .map(item => `${item}:${itemConfig?.[item]}px`)
-              .join(';'),
-            modelValue: itemValue.value,
+            style: "margin-left: 50px",
+            modelValue: testValue.value,
             'onUpdate:modelValue': value => {
               // console.log(value)
+              // console.log(itemValue);
+              testValue.value = value;
               emit('update:itemValue', value);
+              // this.$emit('update:modelValue', value)
             },
             onFocus: () => {
               console.log('onFocus');

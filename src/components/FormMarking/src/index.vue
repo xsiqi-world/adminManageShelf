@@ -7,27 +7,35 @@
     </div>
     <div class="canvas">
       <div class="canvas-container">
-        <li class="line" :style="{display: 'none'}"></li>
-        <div class="canvas-container__item">
-          <inputComp>hello</inputComp>
-        </div>
-        <div class="canvas-container__item">
-          <inputComp>hello</inputComp>
-        </div>
-        <div class="canvas-container__item">
-          <inputComp>hello</inputComp>
-        </div>
+        <el-form :model="formVal">
+          <li class="line" :style="{ display: 'none' }"></li>
+          <div
+            class="canvas-container__item"
+            :class="[comps[key].active ? 'active' : '']"
+            :data-key="key + 1"
+            :key="key"
+            v-for="(item, key) in comps"
+            @click="activeCanvas(key)"
+          >
+            <inputComp
+              v-model:itemValue="formVal[item.name]"
+              :itemConfig="inputCompData"
+            ></inputComp>
+          </div>
+        </el-form>
       </div>
     </div>
+    <div class="config"></div>
     <el-button :icon="Search">Search</el-button>
   </div>
 </template>
 
 <script lang="ts">
 import { Search } from '@element-plus/icons-vue';
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onMounted, ref, reactive, h } from 'vue';
 import { throttle } from '/@/utils/index';
 import inputComp from './components/input.vue';
+import inputCompData from './datas/inputComp.json';
 
 export default defineComponent({
   components: {
@@ -48,47 +56,51 @@ export default defineComponent({
         text: '日期选择器',
       },
     ];
-    const draging = ref();
-    const nodeDep = new Set();
+    const comps = reactive([
+      {
+        key: 1,
+        name: 'name1',
+        active: false,
+      },
+      {
+        key: 2,
+        name: 'name2',
+        active: false,
+      },
+      {
+        key: 3,
+        name: 'name3',
+        active: false,
+      },
+    ]);
+    const formVal = reactive({
+      name1: '1',
+      name2: '2',
+      name3: '3',
+    });
+    let draging: HTMLElement;
+    const overKey = ref(1);
 
     onMounted(() => {
       const menusNode = document.querySelector('.menus') as HTMLElement;
       const canvasContainer = document.querySelector('.canvas-container') as HTMLElement;
 
-      menusNode.addEventListener('dragstart', function (e) {
-        const target = e.target as HTMLElement;
-        console.log('开始了', target);
-        e.dataTransfer.setData('te', target.innerText); //不能使用text，firefox会打开新tab
-        //event.dataTransfer.setData("self", event.target);
-        draging.value = target;
-      });
+      menusNode.addEventListener('dragstart', dragstart);
+      // canvasContainer.addEventListener('dragstart', dragstart)
       // 在区域中移动触发
-      canvasContainer.addEventListener('dragover', throttle(canvasDragover, 100), true);
+      canvasContainer.addEventListener('dragover', throttle(canvasDragover, 50), true);
       menusNode.addEventListener('dragover', throttle(menusDragover, 200), true);
 
-      menusNode.addEventListener('dragend', function () {
-        console.log('松手了');
-        const line = document.querySelector('.line') as HTMLElement;
-        line.style.display = 'none';
-        setTimeout(() => {
-          emptyDep();
-        }, 300);
-      });
-      // 只要在拖动中就触发
-      // menusNode.addEventListener('drag', throttle(drag, 200))
+      menusNode.addEventListener('dragend', menusDragend, false);
+      // canvasContainer.addEventListener('dragend', menusDragend, false);
     });
 
-    const emptyDep = () => {
-      for (const dep of nodeDep) {
-        dep.style.marginTop = 0;
-        dep.style.marginBottom = 0;
-        nodeDep.delete(dep);
-      }
-    };
-
-    const drag = function (e) {
-      e.preventDefault();
-      console.log('拖动中');
+    const dragstart = function (e) {
+      const target = e.target as HTMLElement;
+      console.log('开始了', target);
+      e.dataTransfer.setData('te', target.innerText); //不能使用text，firefox会打开新tab
+      //event.dataTransfer.setData("self", event.target);
+      draging = target;
     };
 
     const menusDragover = function (e) {
@@ -96,46 +108,134 @@ export default defineComponent({
       console.log('进来了menu');
     };
 
+    const menusDragend = function () {
+      console.log('松手了', overKey.value);
+      const line = document.querySelector('.line') as HTMLElement;
+      setTimeout(() => {
+        line.style.display = 'none';
+      }, 300);
+    };
+
     const canvasDragover = function (e) {
       e.preventDefault();
       const line = document.querySelector('.line') as HTMLElement;
       const target = e.target;
-      if (!target.classList.contains('canvas-container__item')) {
+      let dragingRect: DOMRect;
+      let targetRect: DOMRect;
+      if (!target.classList.contains('canvas-container__item') || target == draging) {
+        return;
+      }
+      if (target.animated) {
         return;
       }
       if (line.style.display == 'none') {
         line.style.display = 'block';
       }
-
+      dragingRect = line.getBoundingClientRect();
+      targetRect = target.getBoundingClientRect();
       const y = e.offsetY;
       if (y > target.offsetHeight / 2) {
         console.log('下');
-        emptyDep();
-        target.nextElementSibling.style.marginTop = '5px';
-        line.style.top = (target.offsetTop + target.offsetHeight + 5) + 'px';
-        nodeDep.add(target);
+        target.parentNode.insertBefore(line, target.nextElementSibling);
       } else {
         console.log('上');
-        emptyDep();
-        target.style.marginTop = '5px';
-        line.style.top = (target.offsetTop - 5) + 'px';
-        nodeDep.add(target);
+        target.parentNode.insertBefore(line, target);
       }
-      console.log('进来了', target, e.offsetX, e.offsetY, target.offsetHeight, e);
+
+      _animate(dragingRect, line);
+      _animate(targetRect, target);
+
+      const key = target.getAttribute('data-key');
+      overKey.value = key;
+
+      // console.log('进来了', target, e.offsetX, e.offsetY, target.offsetHeight, e);
     };
 
     const getItemNode = target => {
       if (target?.classList?.contains('canvas-container__item')) {
         return target;
       } else {
-        console.log(target)
         return getItemNode(target.parentNode);
       }
     };
 
+    const _animate = (prevRect, target) => {
+      const ms = 200;
+
+      if (ms) {
+        const currentRect = target.getBoundingClientRect();
+
+        if (prevRect.nodeType === 1) {
+          prevRect = prevRect.getBoundingClientRect();
+        }
+
+        _css(target, 'transition', 'none');
+        _css(
+          target,
+          'transform',
+          'translate3d(' +
+            (prevRect.left - currentRect.left) +
+            'px,' +
+            (prevRect.top - currentRect.top) +
+            'px,0)'
+        );
+
+        target.offsetWidth; // 触发重绘
+        //放在timeout里面也可以
+        // setTimeout(function() {
+        //     _css(target, 'transition', 'all ' + ms + 'ms');
+        //     _css(target, 'transform', 'translate3d(0,0,0)');
+        // }, 0);
+        _css(target, 'transition', 'all ' + ms + 'ms');
+        _css(target, 'transform', 'translate3d(0, 0, 0)');
+
+        clearTimeout(target.animated);
+        target.animated = setTimeout(function () {
+          _css(target, 'transition', '');
+          _css(target, 'transform', '');
+          target.animated = false;
+        }, ms);
+      }
+    };
+
+    //给元素添加style
+    function _css(el, prop, val) {
+      let style = el && el.style;
+
+      if (style) {
+        if (val === void 0) {
+          if (document.defaultView && document.defaultView.getComputedStyle) {
+            val = document.defaultView.getComputedStyle(el, '');
+          } else if (el.currentStyle) {
+            val = el.currentStyle;
+          }
+
+          return prop === void 0 ? val : val[prop];
+        } else {
+          if (!(prop in style)) {
+            prop = '-webkit-' + prop;
+          }
+
+          style[prop] = val + (typeof val === 'string' ? '' : 'px');
+        }
+      }
+    }
+
+    const activeCanvas = index => {
+      comps.map(item => {
+        item.active = false;
+        return item;
+      });
+      comps[index].active = true;
+    };
+
     return {
       Search,
+      formVal,
       menus,
+      inputCompData,
+      comps,
+      activeCanvas
     };
   },
 });
@@ -175,23 +275,39 @@ export default defineComponent({
     .line {
       width: 100%;
       height: 5px;
+      margin: 2px 0;
       border-radius: 10px;
       background: #409eff;
-      position: absolute;
+      position: relative;
       left: 0;
-      transition: all .1s ease-in-out;
+      z-index: 10;
+      // transition: all 0.1s ease-in-out;
     }
 
     .canvas-container {
       .canvas-container__item {
+        user-select: none;
         position: relative;
         padding: 10px;
-        border: 1px solid black;
-        transition: all .1s ease-in-out;
+        margin: 5px 0;
+        border: 1px dashed hsla(0, 0%, 66.7%, 0.5);
+        &.active {
+          outline: 2px solid #409eff;
+          border: 1px solid #409eff;
+        }
+
+        &:after {
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          display: block;
+          z-index: 8;
+          content: '';
+        }
       }
     }
-
-    
   }
 
   .append-before::before,
