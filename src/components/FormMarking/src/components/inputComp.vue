@@ -1,34 +1,34 @@
 <script lang="ts">
 import { h, defineComponent, ref, resolveComponent, toRefs } from 'vue';
 import type { PropType } from 'vue';
+import { ElFormItem, ElInput } from 'element-plus';
 
 export default defineComponent({
   name: 'inputComp',
   props: {
     itemConfig: {
-      type: Object as PropType<object>
+      type: Object as PropType<object>,
     },
     itemValue: {
-      type: [String, Number] as PropType<string>
+      type: [String, Number] as PropType<string>,
     },
   },
   setup(props, { slots, attrs, emit }) {
     const { itemConfig } = props;
     const { itemValue } = toRefs(props);
-    const ElFormItem = resolveComponent('ElFormItem');
-    const ElInput = resolveComponent('ElInput');
+    // const ElFormItem = resolveComponent('ElFormItem');
+    // const ElInput = resolveComponent('ElInput');
 
     return () =>
       h(
         ElFormItem,
         {
-          label: '11',
+          label: itemConfig?.title,
         },
         () => [
           h(ElInput, {
-            style: ['width', 'height']
-              .map(item => `${item}:${itemConfig?.[item]}px`)
-              .join(';'),
+            ...attrs,
+            style: ['width', 'height'].map(item => `${item}:${itemConfig?.[item]}px`).join(';'),
             modelValue: itemValue.value,
             'onUpdate:modelValue': value => {
               // console.log(value)
@@ -37,10 +37,9 @@ export default defineComponent({
             onFocus: () => {
               console.log('onFocus');
             },
-          }), // input组件
+          }),
         ]
       );
-
   },
 });
 </script>

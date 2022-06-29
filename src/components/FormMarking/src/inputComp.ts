@@ -1,44 +1,24 @@
 import data from './datas/inputComp.json';
-import inputComp from './components/input.vue';
-import { h } from 'vue';
+import registerConfig from './main';
+import inputComp from './components/inputComp.vue';
 
-class inputCompHandle {
-  constructor(private config = {}) {
-    this.config = data;
-  }
-  render() {
-    return h(inputComp, {
-      itemConfig: data
-    })
-  }
-}
-
-function createInputConfig() {
-  const componentsList: any[] = [];
-  const componentsMap = new Map();
-
-  return {
-    componentsList,
-    componentsMap,
-    register: (component) => {
-      componentsList.push(component);
-      if (!componentsMap.get(component.type)) {
-        componentsMap.set(component.type, component);
-      }
-    }
-  }
-}
-
-const registerConfig = createInputConfig();
-
-registerConfig.register({
+const textInput = registerConfig.register({
   ...data,
-  type: 'text'
+  type: 'text',
+  componentName: 'inputComp',
+  component: inputComp
 });
 
-registerConfig.register({
+const passwordInput = registerConfig.register({
   ...data,
-  type: 'password'
+  type: 'password',
+  componentName: 'inputComp',
+  component: inputComp
 });
 
-export default registerConfig;
+
+// export default registerConfig;
+export default {
+  'textInput': textInput,
+  'passwordInput': passwordInput,
+};

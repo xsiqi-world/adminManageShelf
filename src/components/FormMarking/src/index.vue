@@ -7,8 +7,8 @@
     </div>
     <div class="canvas">
       <div class="canvas-container">
-        <el-form :model="formVal">
-          <li class="line" :style="{ display: 'none' }"></li>
+        <li class="line" :style="{ display: 'none' }"></li>
+        <FormComp :model="formVal">
           <div
             class="canvas-container__item"
             :class="[comps[key].active ? 'active' : '']"
@@ -17,15 +17,18 @@
             v-for="(item, key) in comps"
             @click="activeCanvas(key)"
           >
-            <inputComp
+            <!-- <InputComp
               v-model:itemValue="formVal[item.name]"
               :itemConfig="inputCompData"
-            ></inputComp>
+            ></InputComp> -->
+            <component :is="item.type" v-model:itemValue="formVal[item.name]" :itemConfig="inputCompData"></component>
+
           </div>
-        </el-form>
+        </FormComp>
       </div>
     </div>
-    <div class="config"></div>
+    <div class="config">
+    </div>
     <el-button :icon="Search">Search</el-button>
   </div>
 </template>
@@ -34,12 +37,16 @@
 import { Search } from '@element-plus/icons-vue';
 import { defineComponent, onMounted, ref, reactive, h } from 'vue';
 import { throttle } from '/@/utils/index';
-import inputComp from './components/input.vue';
+import InputComp from './components/inputComp.vue';
+import FormComp from './components/FormComp.vue';
 import inputCompData from './datas/inputComp.json';
+import inputConfig from './inputComp';
 
 export default defineComponent({
   components: {
-    inputComp,
+    InputComp,
+    FormComp,
+    ...inputConfig
   },
   setup() {
     const menus = [
@@ -60,16 +67,19 @@ export default defineComponent({
       {
         key: 1,
         name: 'name1',
+        type: 'textInput',
         active: false,
       },
       {
         key: 2,
         name: 'name2',
+        type: 'textInput',
         active: false,
       },
       {
         key: 3,
         name: 'name3',
+        type: 'passwordInput',
         active: false,
       },
     ]);
@@ -98,7 +108,7 @@ export default defineComponent({
     const dragstart = function (e) {
       const target = e.target as HTMLElement;
       console.log('开始了', target);
-      e.dataTransfer.setData('te', target.innerText); //不能使用text，firefox会打开新tab
+      // e.dataTransfer.setData('te', target.innerText); //不能使用text，firefox会打开新tab
       //event.dataTransfer.setData("self", event.target);
       draging = target;
     };
@@ -111,8 +121,25 @@ export default defineComponent({
     const menusDragend = function () {
       console.log('松手了', overKey.value);
       const line = document.querySelector('.line') as HTMLElement;
+      const canvasContainer = document.querySelector('.canvas-container') as HTMLElement;
+      const canvasList = document.querySelectorAll('.canvas-container__item') as NodeList;
       setTimeout(() => {
         line.style.display = 'none';
+
+        comps.push({
+          key: 3,
+          name: 'name3',
+          type: 'passwordInput',
+          active: false,
+        });
+        console.log(comps)
+
+        // const hostDom = document.createElement('div');
+        // hostDom.className = 'canvas-container__item';
+
+        // canvasContainer.insertBefore(hostDom, canvasList[overKey.value - 1])
+
+        // registerConfig.componentsMap.get('text').render(hostDom);
       }, 300);
     };
 
@@ -235,7 +262,8 @@ export default defineComponent({
       menus,
       inputCompData,
       comps,
-      activeCanvas
+      activeCanvas,
+      inputConfig,
     };
   },
 });
@@ -289,7 +317,7 @@ export default defineComponent({
         user-select: none;
         position: relative;
         padding: 10px;
-        margin: 5px 0;
+        margin: 3px 0;
         border: 1px dashed hsla(0, 0%, 66.7%, 0.5);
         &.active {
           outline: 2px solid #409eff;
