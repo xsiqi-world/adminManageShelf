@@ -59,6 +59,7 @@ function createCompConfig() {
   }
 }
 
+// 使用享元模式避免重复new同一个对象消耗内存
 const registerConfig = createCompConfig();
 
 export default registerConfig;

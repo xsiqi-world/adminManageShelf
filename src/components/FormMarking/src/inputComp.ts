@@ -1,19 +1,19 @@
 import data from './datas/inputComp.json';
 import registerConfig from './main';
-import inputComp from './components/inputComp.vue';
+import InputComp from './components/InputComp.vue';
 
 const textInput = registerConfig.register({
   ...data,
   type: 'text',
-  componentName: 'inputComp',
-  component: inputComp
+  componentName: 'InputComp',
+  component: InputComp
 });
 
 const passwordInput = registerConfig.register({
   ...data,
   type: 'password',
-  componentName: 'inputComp',
-  component: inputComp
+  componentName: 'InputComp',
+  component: InputComp
 });
 
 

@@ -1,9 +1,7 @@
 <template>
   <div class="formMarking">
     <div class="menus">
-      <div class="group-option" draggable="true" v-for="item in menus">
-        <span>{{ item.text }}</span>
-      </div>
+      <FormMenu :menuList="menuList"></FormMenu>
     </div>
     <div class="canvas">
       <div class="canvas-container">
@@ -13,74 +11,79 @@
             class="canvas-container__item"
             :class="[comps[key].active ? 'active' : '']"
             :data-key="key + 1"
-            :key="key"
+            :key="item.name"
             v-for="(item, key) in comps"
             @click="activeCanvas(key)"
+            :draggable="item.activeIsDrag"
           >
             <!-- <InputComp
               v-model:itemValue="formVal[item.name]"
               :itemConfig="inputCompData"
             ></InputComp> -->
-            <component :is="item.type" v-model:itemValue="formVal[item.name]" :itemConfig="inputCompData"></component>
 
+            {{ item.type }}
+            <component :is="item.type" v-model:itemValue="formVal[item.name]"></component>
+            <div class="widget-view-action" v-if="comps[key].active">
+              <el-icon><DocumentCopy /></el-icon>
+              <el-icon><DeleteFilled /></el-icon>
+            </div>
+            <div
+              class="widget-view-drag"
+              v-if="comps[key].active"
+              :draggable="!item.activeIsDrag"
+              @mousedown="() => mousedown(key)"
+              @mouseup="() => mouseup(key)"
+            >
+              <el-icon><Rank /></el-icon>
+            </div>
+            <div class="widget-view-model"><span>input_s9k49vns</span></div>
           </div>
         </FormComp>
       </div>
     </div>
-    <div class="config">
-    </div>
+    <div class="config"></div>
     <el-button :icon="Search">Search</el-button>
   </div>
 </template>
 
 <script lang="ts">
 import { Search } from '@element-plus/icons-vue';
-import { defineComponent, onMounted, ref, reactive, h } from 'vue';
+import { defineComponent, onMounted, ref, reactive, nextTick } from 'vue';
 import { throttle } from '/@/utils/index';
-import InputComp from './components/inputComp.vue';
+import InputComp from './components/InputComp.vue';
 import FormComp from './components/FormComp.vue';
 import inputCompData from './datas/inputComp.json';
-import inputConfig from './inputComp';
+import formMenuList from './datas/formMenu.json';
+import inputRegisterConfig from './inputComp';
+import FormMenu from './components/FormMenu.vue';
 
 export default defineComponent({
   components: {
     InputComp,
     FormComp,
-    ...inputConfig
+    FormMenu,
+    ...inputRegisterConfig,
   },
   setup() {
-    const menus = [
-      {
-        text: '单行文本',
-      },
-      {
-        text: '单选项框组',
-      },
-      {
-        text: '多选框组',
-      },
-      {
-        text: '日期选择器',
-      },
-    ];
+    const menuList = formMenuList;
     const comps = reactive([
       {
-        key: 1,
         name: 'name1',
         type: 'textInput',
         active: false,
+        activeIsDrag: false,
       },
       {
-        key: 2,
         name: 'name2',
         type: 'textInput',
         active: false,
+        activeIsDrag: false,
       },
       {
-        key: 3,
         name: 'name3',
         type: 'passwordInput',
         active: false,
+        activeIsDrag: false,
       },
     ]);
     const formVal = reactive({
@@ -89,20 +92,24 @@ export default defineComponent({
       name3: '3',
     });
     let draging: HTMLElement;
-    const overKey = ref(1);
+    let overDraging: HTMLElement;
+    const overIndex = ref(1);// 松手时的元素key
+    const activeIndex = ref(0);// 选中的元素key
+    const upOrDown = ref(1);// 1:上，0:下
+    const isAppend = ref(false);
 
     onMounted(() => {
       const menusNode = document.querySelector('.menus') as HTMLElement;
       const canvasContainer = document.querySelector('.canvas-container') as HTMLElement;
 
       menusNode.addEventListener('dragstart', dragstart);
-      // canvasContainer.addEventListener('dragstart', dragstart)
+      canvasContainer.addEventListener('dragstart', dragstart);
       // 在区域中移动触发
       canvasContainer.addEventListener('dragover', throttle(canvasDragover, 50), true);
       menusNode.addEventListener('dragover', throttle(menusDragover, 200), true);
 
       menusNode.addEventListener('dragend', menusDragend, false);
-      // canvasContainer.addEventListener('dragend', menusDragend, false);
+      canvasContainer.addEventListener('dragend', canvasDragend, false);
     });
 
     const dragstart = function (e) {
@@ -115,57 +122,79 @@ export default defineComponent({
 
     const menusDragover = function (e) {
       e.preventDefault();
+      const target = e.target;
       console.log('进来了menu');
+      isAppend.value = false;
     };
 
-    const menusDragend = function () {
-      console.log('松手了', overKey.value);
+    const menusDragend = function (e) {
+      console.log('松手了', overIndex.value, e.target);
       const line = document.querySelector('.line') as HTMLElement;
-      const canvasContainer = document.querySelector('.canvas-container') as HTMLElement;
-      const canvasList = document.querySelectorAll('.canvas-container__item') as NodeList;
+
       setTimeout(() => {
         line.style.display = 'none';
+        comps[activeIndex.value].activeIsDrag = false;
 
-        comps.push({
-          key: 3,
-          name: 'name3',
-          type: 'passwordInput',
-          active: false,
-        });
-        console.log(comps)
+        appendComp(isAppend.value, overIndex.value);
 
-        // const hostDom = document.createElement('div');
-        // hostDom.className = 'canvas-container__item';
-
-        // canvasContainer.insertBefore(hostDom, canvasList[overKey.value - 1])
-
-        // registerConfig.componentsMap.get('text').render(hostDom);
+        console.log(comps, formVal);
       }, 300);
     };
+
+    const canvasDragend = function (e) {
+      const line = document.querySelector('.line') as HTMLElement;
+      comps[activeIndex.value].activeIsDrag = false;
+      const target = e.target;
+      setTimeout(() => {
+        line.style.display = 'none';
+console.log(activeIndex.value, overIndex.value)
+
+        // comps[overIndex.value - 1] = comps.splice(activeIndex.value, 1, comps[overIndex.value - 1])[0];
+
+        const dragingRect: DOMRect = overDraging.getBoundingClientRect();
+        const targetRect: DOMRect = target.getBoundingClientRect();
+
+        nextTick(() => {
+          // const oldComp = Object.assign({}, comps[activeIndex.value]);
+          // comps.splice(activeIndex.value, 1);
+          // comps.splice(overIndex.value - 2, 0, oldComp);
+          comps[overIndex.value - 1] = comps.splice(activeIndex.value, 1, comps[overIndex.value - 1])[0];
+        })
+
+        target.parentNode.insertBefore(overDraging, target);
+
+
+        _animate(dragingRect, overDraging);
+        _animate(targetRect, target);
+      }, 300);
+    }
 
     const canvasDragover = function (e) {
       e.preventDefault();
       const line = document.querySelector('.line') as HTMLElement;
       const target = e.target;
-      let dragingRect: DOMRect;
-      let targetRect: DOMRect;
+
+      isAppend.value = true;
+
+      if (line.style.display == 'none') {
+        line.style.display = 'block';
+      }
       if (!target.classList.contains('canvas-container__item') || target == draging) {
         return;
       }
       if (target.animated) {
         return;
       }
-      if (line.style.display == 'none') {
-        line.style.display = 'block';
-      }
-      dragingRect = line.getBoundingClientRect();
-      targetRect = target.getBoundingClientRect();
+      const dragingRect: DOMRect = line.getBoundingClientRect();
+      const targetRect: DOMRect = target.getBoundingClientRect();
       const y = e.offsetY;
       if (y > target.offsetHeight / 2) {
         console.log('下');
+        upOrDown.value = 0;
         target.parentNode.insertBefore(line, target.nextElementSibling);
       } else {
         console.log('上');
+        upOrDown.value = 1;
         target.parentNode.insertBefore(line, target);
       }
 
@@ -173,7 +202,8 @@ export default defineComponent({
       _animate(targetRect, target);
 
       const key = target.getAttribute('data-key');
-      overKey.value = key;
+      overIndex.value = key;
+      overDraging = target;
 
       // console.log('进来了', target, e.offsetX, e.offsetY, target.offsetHeight, e);
     };
@@ -248,22 +278,61 @@ export default defineComponent({
       }
     }
 
+    // 选中组件
     const activeCanvas = index => {
       comps.map(item => {
         item.active = false;
         return item;
       });
       comps[index].active = true;
+      activeIndex.value = index;
     };
+
+    const random = () => {
+      return Math.random().toString(36).substr(2);
+    };
+
+    const mousedown = key => {
+      comps[key].activeIsDrag = true;
+      activeIndex.value = key;
+    };
+
+    const mouseup = key => {
+      comps[key].activeIsDrag = false;
+    };
+
+    // 插入comp
+    const appendComp = (isAppend, key) => {
+      if (isAppend) {
+        const randomNum = random();
+        formVal['name' + randomNum] = randomNum;
+        if (upOrDown.value) {
+          comps.splice(key - 1, 0, {
+            name: 'name' + randomNum,
+            type: 'passwordInput',
+            active: false,
+            activeIsDrag: false,
+          });
+        } else {
+          comps.splice(key, 0, {
+            name: 'name' + randomNum,
+            type: 'passwordInput',
+            active: false,
+            activeIsDrag: false,
+          });
+        }
+      }
+    }
 
     return {
       Search,
       formVal,
-      menus,
+      menuList,
       inputCompData,
       comps,
       activeCanvas,
-      inputConfig,
+      mousedown,
+      mouseup,
     };
   },
 });
@@ -282,14 +351,6 @@ export default defineComponent({
     justify-content: space-between;
     flex-wrap: wrap;
     margin-right: 10px;
-    .group-option {
-      background: #e5e6eb;
-      padding: 10px;
-      font-size: 13px;
-      width: 40%;
-      margin: 5px;
-      cursor: move;
-    }
   }
 
   .canvas {
@@ -299,12 +360,13 @@ export default defineComponent({
     background: #fff;
     align-self: center;
     box-shadow: 0 4px 12px #ebedf0;
+    overflow: auto;
+    padding: 5px;
 
     .line {
       width: 100%;
       height: 5px;
-      margin: 2px 0;
-      border-radius: 10px;
+      border-radius: 5px;
       background: #409eff;
       position: relative;
       left: 0;
@@ -313,6 +375,8 @@ export default defineComponent({
     }
 
     .canvas-container {
+      min-height: 100%;
+
       .canvas-container__item {
         user-select: none;
         position: relative;
@@ -333,6 +397,48 @@ export default defineComponent({
           display: block;
           z-index: 8;
           content: '';
+        }
+
+        .widget-view-action {
+          position: absolute;
+          right: 0;
+          bottom: 0;
+          height: 28px;
+          line-height: 28px;
+          background: #409eff;
+          z-index: 10;
+          i {
+            font-size: 14px;
+            color: #fff;
+            margin: 0 5px;
+            cursor: pointer;
+          }
+        }
+        .widget-view-drag {
+          display: block;
+          position: absolute;
+          left: -2px;
+          top: -2px;
+          bottom: -18px;
+          height: 28px;
+          line-height: 28px;
+          background: #409eff;
+          z-index: 10;
+          i {
+            font-size: 14px;
+            color: #fff;
+            margin: 0 5px;
+            cursor: move;
+          }
+        }
+        .widget-view-model {
+          position: absolute;
+          top: 2px;
+          right: 3px;
+          font-size: 12px;
+          color: #67c23a;
+          z-index: 9;
+          font-weight: 500;
         }
       }
     }

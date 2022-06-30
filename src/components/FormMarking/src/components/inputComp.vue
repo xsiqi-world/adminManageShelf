@@ -28,6 +28,7 @@ export default defineComponent({
         () => [
           h(ElInput, {
             ...attrs,
+            type: itemConfig?.type,
             style: ['width', 'height'].map(item => `${item}:${itemConfig?.[item]}px`).join(';'),
             modelValue: itemValue.value,
             'onUpdate:modelValue': value => {
