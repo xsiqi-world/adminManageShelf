@@ -1,5 +1,5 @@
 <script lang="ts">
-import { h, defineComponent, ref, resolveComponent, toRefs } from 'vue';
+import { h, defineComponent, resolveComponent, toRefs } from 'vue';
 import type { PropType } from 'vue';
 import { ElFormItem, ElInput } from 'element-plus';
 

@@ -21,22 +21,21 @@
               :itemConfig="inputCompData"
             ></InputComp> -->
 
-            {{ item.type }}
             <component :is="item.type" v-model:itemValue="formVal[item.name]"></component>
-            <div class="widget-view-action" v-if="comps[key].active">
+            <div v-if="comps[key].active" class="widget-view-action">
               <el-icon><DocumentCopy /></el-icon>
               <el-icon><DeleteFilled /></el-icon>
             </div>
             <div
-              class="widget-view-drag"
               v-if="comps[key].active"
+              class="widget-view-drag"
               :draggable="!item.activeIsDrag"
               @mousedown="() => mousedown(key)"
               @mouseup="() => mouseup(key)"
             >
               <el-icon><Rank /></el-icon>
             </div>
-            <div class="widget-view-model"><span>input_s9k49vns</span></div>
+            <div class="widget-view-model"><span>{{ item.name }}</span></div>
           </div>
         </FormComp>
       </div>
@@ -93,20 +92,38 @@ export default defineComponent({
     });
     let draging: HTMLElement;
     let overDraging: HTMLElement;
-    const overIndex = ref(1);// 松手时的元素key
-    const activeIndex = ref(0);// 选中的元素key
-    const upOrDown = ref(1);// 1:上，0:下
+    const overIndex = ref(1); // 松手时的元素key
+    const activeIndex = ref(0); // 选中的元素key
+    const upOrDown = ref(1); // 1:上，0:下
     const isAppend = ref(false);
 
     onMounted(() => {
       const menusNode = document.querySelector('.menus') as HTMLElement;
       const canvasContainer = document.querySelector('.canvas-container') as HTMLElement;
+      const line = document.querySelector('.line') as HTMLElement;
 
       menusNode.addEventListener('dragstart', dragstart);
       canvasContainer.addEventListener('dragstart', dragstart);
       // 在区域中移动触发
       canvasContainer.addEventListener('dragover', throttle(canvasDragover, 50), true);
-      menusNode.addEventListener('dragover', throttle(menusDragover, 200), true);
+
+      canvasContainer.addEventListener(
+        'dragenter',
+        () => {
+          isAppend.value = true;
+          line.style.display = 'block';
+        },
+        false
+      );
+
+      menusNode.addEventListener(
+        'dragenter',
+        () => {
+          isAppend.value = false;
+          line.style.display = 'none';
+        },
+        false
+      );
 
       menusNode.addEventListener('dragend', menusDragend, false);
       canvasContainer.addEventListener('dragend', canvasDragend, false);
@@ -114,17 +131,10 @@ export default defineComponent({
 
     const dragstart = function (e) {
       const target = e.target as HTMLElement;
-      console.log('开始了', target);
+      console.log('开始拖动', target);
       // e.dataTransfer.setData('te', target.innerText); //不能使用text，firefox会打开新tab
       //event.dataTransfer.setData("self", event.target);
       draging = target;
-    };
-
-    const menusDragover = function (e) {
-      e.preventDefault();
-      const target = e.target;
-      console.log('进来了menu');
-      isAppend.value = false;
     };
 
     const menusDragend = function (e) {
@@ -147,7 +157,7 @@ export default defineComponent({
       const target = e.target;
       setTimeout(() => {
         line.style.display = 'none';
-console.log(activeIndex.value, overIndex.value)
+        console.log(activeIndex.value, overIndex.value);
 
         // comps[overIndex.value - 1] = comps.splice(activeIndex.value, 1, comps[overIndex.value - 1])[0];
 
@@ -158,27 +168,25 @@ console.log(activeIndex.value, overIndex.value)
           // const oldComp = Object.assign({}, comps[activeIndex.value]);
           // comps.splice(activeIndex.value, 1);
           // comps.splice(overIndex.value - 2, 0, oldComp);
-          comps[overIndex.value - 1] = comps.splice(activeIndex.value, 1, comps[overIndex.value - 1])[0];
-        })
+          comps[overIndex.value - 1] = comps.splice(
+            activeIndex.value,
+            1,
+            comps[overIndex.value - 1]
+          )[0];
+        });
 
         target.parentNode.insertBefore(overDraging, target);
-
 
         _animate(dragingRect, overDraging);
         _animate(targetRect, target);
       }, 300);
-    }
+    };
 
     const canvasDragover = function (e) {
       e.preventDefault();
       const line = document.querySelector('.line') as HTMLElement;
       const target = e.target;
 
-      isAppend.value = true;
-
-      if (line.style.display == 'none') {
-        line.style.display = 'block';
-      }
       if (!target.classList.contains('canvas-container__item') || target == draging) {
         return;
       }
@@ -305,24 +313,25 @@ console.log(activeIndex.value, overIndex.value)
     const appendComp = (isAppend, key) => {
       if (isAppend) {
         const randomNum = random();
-        formVal['name' + randomNum] = randomNum;
+        const name = 'name_' + randomNum;
+        formVal[name] = randomNum;
         if (upOrDown.value) {
           comps.splice(key - 1, 0, {
-            name: 'name' + randomNum,
+            name: name,
             type: 'passwordInput',
             active: false,
             activeIsDrag: false,
           });
         } else {
           comps.splice(key, 0, {
-            name: 'name' + randomNum,
+            name: name,
             type: 'passwordInput',
             active: false,
             activeIsDrag: false,
           });
         }
       }
-    }
+    };
 
     return {
       Search,
