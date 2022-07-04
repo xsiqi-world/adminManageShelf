@@ -25,7 +25,7 @@ const compFactory = (function () {
   const caches = {};
 
   return {
-    create: function (handle, type) {
+    create: function (handle, type: string) {
       if (caches[type]) {
         return handle.render();
       }
@@ -54,7 +54,7 @@ function createCompConfig() {
         handle = componentsMap.get(config.componentName);
       }
       
-      return compFactory.create(handle, config.type);
+      return compFactory.create(handle, config.type || config.componentName);
     }
   }
 }

@@ -16,10 +16,6 @@
             @click="activeCanvas(key)"
             :draggable="item.activeIsDrag"
           >
-            <!-- <InputComp
-              v-model:itemValue="formVal[item.name]"
-              :itemConfig="inputCompData"
-            ></InputComp> -->
 
             <component :is="item.type" v-model:itemValue="formVal[item.name]"></component>
             <div v-if="comps[key].active" class="widget-view-action">
@@ -36,6 +32,7 @@
               <el-icon><Rank /></el-icon>
             </div>
             <div class="widget-view-model"><span>{{ item.name }}</span></div>
+
           </div>
         </FormComp>
       </div>
@@ -49,19 +46,22 @@
 import { Search } from '@element-plus/icons-vue';
 import { defineComponent, onMounted, ref, reactive, nextTick } from 'vue';
 import { throttle } from '/@/utils/index';
-import InputComp from './components/InputComp.vue';
 import FormComp from './components/FormComp.vue';
 import inputCompData from './datas/inputComp.json';
 import formMenuList from './datas/formMenu.json';
-import inputRegisterConfig from './inputComp';
+
 import FormMenu from './components/FormMenu.vue';
+import inputRegisterConfig from './inputComp';
+import selectRegisterConfig from './selectComp';
+import dateRegisterConfig from './datePicker';
 
 export default defineComponent({
   components: {
-    InputComp,
     FormComp,
     FormMenu,
     ...inputRegisterConfig,
+    ...selectRegisterConfig,
+    ...dateRegisterConfig
   },
   setup() {
     const menuList = formMenuList;
@@ -84,12 +84,27 @@ export default defineComponent({
         active: false,
         activeIsDrag: false,
       },
+      {
+        name: 'name4',
+        type: 'selectComp',
+        active: false,
+        activeIsDrag: false,
+      },
+      {
+        name: 'name5',
+        type: 'daterangePicker',
+        active: false,
+        activeIsDrag: false,
+      },
     ]);
     const formVal = reactive({
       name1: '1',
       name2: '2',
       name3: '3',
+      name4: '2',
+      name5: [],
     });
+    
     let draging: HTMLElement;
     let overDraging: HTMLElement;
     const overIndex = ref(1); // 松手时的元素key
@@ -397,16 +412,16 @@ export default defineComponent({
           border: 1px solid #409eff;
         }
 
-        &:after {
-          position: absolute;
-          left: 0;
-          right: 0;
-          top: 0;
-          bottom: 0;
-          display: block;
-          z-index: 8;
-          content: '';
-        }
+        // &:after {
+        //   position: absolute;
+        //   left: 0;
+        //   right: 0;
+        //   top: 0;
+        //   bottom: 0;
+        //   display: block;
+        //   z-index: 8;
+        //   content: '';
+        // }
 
         .widget-view-action {
           position: absolute;

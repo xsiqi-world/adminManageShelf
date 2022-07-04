@@ -1,23 +1,21 @@
 <script lang="ts">
-import { h, defineComponent, resolveComponent, toRefs } from 'vue';
+import { h, defineComponent, toRefs } from 'vue';
 import type { PropType } from 'vue';
-import { ElFormItem, ElInput } from 'element-plus';
+import { ElFormItem, ElDatePicker } from 'element-plus';
 
 export default defineComponent({
-  name: 'inputComp',
+  name: 'datePicker',
   props: {
     itemConfig: {
       type: Object as PropType<object>,
     },
     itemValue: {
-      type: [String, Number] as PropType<string>,
+      type: [Date, Array],
     },
   },
   setup(props, { attrs, emit }) {
     const { itemConfig }: { itemConfig: any } = props;
     const { itemValue } = toRefs(props);
-    // const ElFormItem = resolveComponent('ElFormItem');
-    // const ElInput = resolveComponent('ElInput');
 
     return () =>
       h(
@@ -27,17 +25,13 @@ export default defineComponent({
           labelWidth: itemConfig.labelWidth || 'auto',
         },
         () => [
-          h(ElInput, {
+          h(ElDatePicker, {
             ...attrs,
             type: itemConfig.type,
-            style: ['width', 'height'].map(item => `${item}:${itemConfig[item]}px`).join(';'),
             modelValue: itemValue.value,
             'onUpdate:modelValue': value => {
               // console.log(value);
               emit('update:itemValue', value);
-            },
-            onFocus: () => {
-              console.log('onFocus');
             },
           }),
         ]

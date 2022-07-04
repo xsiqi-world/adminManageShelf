@@ -16,14 +16,15 @@
 
 <script lang="ts">
 // import { scrollTo } from '@/utils/scrollTo';
-import { computed, defineComponent, reactive, PropType, Ref, toRefs } from 'vue';
+import { computed, defineComponent, reactive, toRefs } from 'vue';
+import type { PropType, Ref } from 'vue';
 
 export default defineComponent({
   name: 'Pagination',
   props: {
     total: {
       type: Number as PropType<number>,
-      required: true
+      required: true,
     },
     page: {
       type: Number as PropType<number>,
@@ -55,32 +56,36 @@ export default defineComponent({
     },
   },
   setup(props, ctx) {
-    const { page, limit, autoScroll } = toRefs(props);
+    const {
+      page,
+      limit,
+      autoScroll,
+    }: { page: Ref<number>; limit: Ref<number>; autoScroll: Ref<boolean> } = toRefs(props);
 
-    const handleCurrentChange = (val) => {
+    const handleCurrentChange = val => {
       ctx.emit('pagination', { page: val, limit: limit.value });
       ctx.emit('update:page', val);
       if (autoScroll) {
         // scrollTo(0, 800);
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
       }
-    }
+    };
 
-    const handleSizeChange = (val) => {
+    const handleSizeChange = val => {
       ctx.emit('pagination', { page: page.value, limit: val });
       ctx.emit('update:limit', val);
       if (autoScroll) {
         // scrollTo(0, 800);
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
       }
-    }
+    };
 
     return {
       handleSizeChange,
       handleCurrentChange,
       ...toRefs(props),
-    }
-  }
+    };
+  },
 });
 </script>
 

@@ -5,8 +5,6 @@
 </template>
 
 <script>
-// import type { PropType } from 'vue';
-
 import { toRefs } from 'vue';
 
 export default {
@@ -18,7 +16,7 @@ export default {
   setup(props) {
     const { menuList } = toRefs(props);
     return {
-      menuList
+      menuList,
     };
   },
 };

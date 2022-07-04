@@ -6,7 +6,7 @@ import { ElForm } from "element-plus";
 export default defineComponent({
   name: 'formComp',
   props: {},
-  setup(props, { slots, attrs, emit }) {
+  setup(props, { slots, attrs }) {
 
     return () =>
       h(

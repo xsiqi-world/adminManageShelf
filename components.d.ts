@@ -6,6 +6,8 @@ declare module 'vue' {
   export interface GlobalComponents {
     AdjustConfig: typeof import('./src/components/FormMarking/src/components/AdjustConfig.vue')['default']
     BaseTable: typeof import('./src/components/BaseTable/index.vue')['default']
+    DatePicker: typeof import('./src/components/FormMarking/src/components/DatePicker.vue')['default']
+    DateTimePicker: typeof import('./src/components/FormMarking/src/components/DateTimePicker.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
@@ -16,6 +18,8 @@ declare module 'vue' {
     ElPagination: typeof import('element-plus/es')['ElPagination']
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
     FormComp: typeof import('./src/components/FormMarking/src/components/FormComp.vue')['default']
+    FormItem: typeof import('./src/components/FormMarking/src/components/FormItem.vue')['default']
+    FormMarkingItem: typeof import('./src/components/FormMarking/src/components/FormMarkingItem.vue')['default']
     FormMenu: typeof import('./src/components/FormMarking/src/components/FormMenu.vue')['default']
     FormMenuComp: typeof import('./src/components/FormMarking/src/components/FormMenuComp.vue')['default']
     Heading: typeof import('./src/components/Heading.vue')['default']
@@ -28,6 +32,7 @@ declare module 'vue' {
     Menu: typeof import('./src/components/Menu/src/Menu.vue')['default']
     MenuItem: typeof import('./src/components/Menu/src/components/MenuItem.vue')['default']
     'MenuItem copy': typeof import('./src/components/Menu/MenuItem copy.vue')['default']
+    SelectComp: typeof import('./src/components/FormMarking/src/components/SelectComp.vue')['default']
     Src: typeof import('./src/components/FormMarking/src/index.vue')['default']
   }
 }

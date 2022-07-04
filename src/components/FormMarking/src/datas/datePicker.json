@@ -2,8 +2,11 @@
   "width": "150",
   "name": "name",
   "title": "Activity name",
+  "size": "default",
   "className": [],
   "require": true,
+  "format": "yyyy-MM-DD",
+  "valueFormat": "yyyy-MM-DD",
   "operation": [
     {
       "title": "禁用",
