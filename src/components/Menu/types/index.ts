@@ -1,7 +1,7 @@
-export interface menuItem<T = any> {
+export interface menuItem {
   id: number | string;
-  index?: string | null
+  index?: string | null;
   name: string;
-  children?: T[];
+  children?: menuItem[];
   path?: string;
 }

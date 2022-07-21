@@ -5,14 +5,12 @@ import InputComp from './components/InputComp.vue';
 const textInput = registerConfig.register({
   ...data,
   type: 'text',
-  componentName: 'InputComp',
   component: InputComp
 });
 
 const passwordInput = registerConfig.register({
   ...data,
   type: 'password',
-  componentName: 'InputComp',
   component: InputComp
 });
 

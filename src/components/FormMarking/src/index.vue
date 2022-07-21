@@ -5,7 +5,7 @@
     </div>
     <div class="canvas">
       <div class="canvas-container">
-        <li class="line" :style="{ display: 'none' }"></li>
+        <li class="line" :style="{ display: isAppend ? 'block' : 'none' }"></li>
         <FormComp :model="formVal">
           <div
             class="canvas-container__item"
@@ -19,8 +19,8 @@
 
             <component :is="item.type" v-model:itemValue="formVal[item.name]"></component>
             <div v-if="comps[key].active" class="widget-view-action">
-              <el-icon><DocumentCopy /></el-icon>
-              <el-icon><DeleteFilled /></el-icon>
+              <el-icon @click="() => copyComp(key)"><DocumentCopy /></el-icon>
+              <el-icon @click="() => deleteComp(key)"><DeleteFilled /></el-icon>
             </div>
             <div
               v-if="comps[key].active"
@@ -44,24 +44,21 @@
 
 <script lang="ts">
 import { Search } from '@element-plus/icons-vue';
-import { defineComponent, onMounted, ref, reactive, nextTick } from 'vue';
+import { defineComponent, onMounted, ref, unref, reactive, nextTick } from 'vue';
+import type { Ref } from 'vue';
 import { throttle } from '/@/utils/index';
 import FormComp from './components/FormComp.vue';
-import inputCompData from './datas/inputComp.json';
 import formMenuList from './datas/formMenu.json';
+import useDrag, { setDragstart } from '/@/hooks/event/useDrag';
 
 import FormMenu from './components/FormMenu.vue';
-import inputRegisterConfig from './inputComp';
-import selectRegisterConfig from './selectComp';
-import dateRegisterConfig from './datePicker';
+import comp from './index';
 
 export default defineComponent({
   components: {
     FormComp,
     FormMenu,
-    ...inputRegisterConfig,
-    ...selectRegisterConfig,
-    ...dateRegisterConfig
+    ...comp
   },
   setup() {
     const menuList = formMenuList;
@@ -105,9 +102,9 @@ export default defineComponent({
       name5: [],
     });
     
-    let draging: HTMLElement;
+    const draging = ref() as Ref<Element>;
     let overDraging: HTMLElement;
-    const overIndex = ref(1); // 松手时的元素key
+    const overIndex = ref(0); // 松手时的元素key
     const activeIndex = ref(0); // 选中的元素key
     const upOrDown = ref(1); // 1:上，0:下
     const isAppend = ref(false);
@@ -115,27 +112,31 @@ export default defineComponent({
     onMounted(() => {
       const menusNode = document.querySelector('.menus') as HTMLElement;
       const canvasContainer = document.querySelector('.canvas-container') as HTMLElement;
-      const line = document.querySelector('.line') as HTMLElement;
 
-      menusNode.addEventListener('dragstart', dragstart);
-      canvasContainer.addEventListener('dragstart', dragstart);
+      setDragstart(menusNode, draging);
+      setDragstart(canvasContainer, draging);
       // 在区域中移动触发
-      canvasContainer.addEventListener('dragover', throttle(canvasDragover, 50), true);
+      canvasContainer.addEventListener('dragover', throttle(canvasDragover, 100), true);
 
       canvasContainer.addEventListener(
         'dragenter',
         () => {
           isAppend.value = true;
-          line.style.display = 'block';
         },
         false
       );
+      // canvasContainer.addEventListener(
+      //   'dragleave',
+      //   () => {
+      //     isAppend.value = false;
+      //   },
+      //   false
+      // );
 
       menusNode.addEventListener(
         'dragenter',
         () => {
           isAppend.value = false;
-          line.style.display = 'none';
         },
         false
       );
@@ -144,56 +145,52 @@ export default defineComponent({
       canvasContainer.addEventListener('dragend', canvasDragend, false);
     });
 
-    const dragstart = function (e) {
-      const target = e.target as HTMLElement;
-      console.log('开始拖动', target);
-      // e.dataTransfer.setData('te', target.innerText); //不能使用text，firefox会打开新tab
-      //event.dataTransfer.setData("self", event.target);
-      draging = target;
-    };
-
     const menusDragend = function (e) {
-      console.log('松手了', overIndex.value, e.target);
-      const line = document.querySelector('.line') as HTMLElement;
+      console.log('松手了', unref(overIndex), e.target);
 
       setTimeout(() => {
-        line.style.display = 'none';
-        comps[activeIndex.value].activeIsDrag = false;
+        comps[unref(activeIndex)].activeIsDrag = false;
 
-        appendComp(isAppend.value, overIndex.value);
+        appendComp(unref(isAppend), unref(overIndex));
+
+        isAppend.value = false;
 
         console.log(comps, formVal);
       }, 300);
     };
 
     const canvasDragend = function (e) {
-      const line = document.querySelector('.line') as HTMLElement;
-      comps[activeIndex.value].activeIsDrag = false;
+      comps[unref(activeIndex)].activeIsDrag = false;
       const target = e.target;
       setTimeout(() => {
-        line.style.display = 'none';
-        console.log(activeIndex.value, overIndex.value);
+        console.log(unref(activeIndex), unref(overIndex));
 
-        // comps[overIndex.value - 1] = comps.splice(activeIndex.value, 1, comps[overIndex.value - 1])[0];
-
-        const dragingRect: DOMRect = overDraging.getBoundingClientRect();
-        const targetRect: DOMRect = target.getBoundingClientRect();
+        // const dragingRect: DOMRect = overDraging.getBoundingClientRect();
+        // const targetRect: DOMRect = target.getBoundingClientRect();
 
         nextTick(() => {
-          // const oldComp = Object.assign({}, comps[activeIndex.value]);
-          // comps.splice(activeIndex.value, 1);
-          // comps.splice(overIndex.value - 2, 0, oldComp);
-          comps[overIndex.value - 1] = comps.splice(
-            activeIndex.value,
-            1,
-            comps[overIndex.value - 1]
-          )[0];
+          const splice = comps.splice(unref(activeIndex), 1)[0];
+          if (upOrDown.value) {
+            comps.splice(unref(overIndex) - 1, 0, splice);
+          } else {
+            comps.splice(unref(overIndex), 0, splice);
+          }
+
+          console.log(unref(overIndex) - 1, upOrDown.value)
+
+          // comps[unref(overIndex) - 1] = comps.splice(
+          //   unref(activeIndex),
+          //   1,
+          //   comps[unref(overIndex) - 1]
+          // )[0];
+
+          isAppend.value = false;
         });
 
-        target.parentNode.insertBefore(overDraging, target);
+        // target.parentNode.insertBefore(overDraging, target);
 
-        _animate(dragingRect, overDraging);
-        _animate(targetRect, target);
+        // _animate(dragingRect, overDraging);
+        // _animate(targetRect, target);
       }, 300);
     };
 
@@ -202,7 +199,7 @@ export default defineComponent({
       const line = document.querySelector('.line') as HTMLElement;
       const target = e.target;
 
-      if (!target.classList.contains('canvas-container__item') || target == draging) {
+      if (!target.classList.contains('canvas-container__item') || target == unref(draging)) {
         return;
       }
       if (target.animated) {
@@ -229,14 +226,6 @@ export default defineComponent({
       overDraging = target;
 
       // console.log('进来了', target, e.offsetX, e.offsetY, target.offsetHeight, e);
-    };
-
-    const getItemNode = target => {
-      if (target?.classList?.contains('canvas-container__item')) {
-        return target;
-      } else {
-        return getItemNode(target.parentNode);
-      }
     };
 
     const _animate = (prevRect, target) => {
@@ -278,7 +267,7 @@ export default defineComponent({
       }
     };
 
-    //给元素添加style
+    // 给元素添加style
     function _css(el, prop, val) {
       let style = el && el.style;
 
@@ -315,11 +304,13 @@ export default defineComponent({
       return Math.random().toString(36).substr(2);
     };
 
+    // 长按
     const mousedown = key => {
       comps[key].activeIsDrag = true;
       activeIndex.value = key;
     };
 
+    // 长按松手
     const mouseup = key => {
       comps[key].activeIsDrag = false;
     };
@@ -330,33 +321,44 @@ export default defineComponent({
         const randomNum = random();
         const name = 'name_' + randomNum;
         formVal[name] = randomNum;
-        if (upOrDown.value) {
-          comps.splice(key - 1, 0, {
-            name: name,
-            type: 'passwordInput',
-            active: false,
-            activeIsDrag: false,
-          });
-        } else {
-          comps.splice(key, 0, {
-            name: name,
-            type: 'passwordInput',
-            active: false,
-            activeIsDrag: false,
-          });
-        }
+        const index = unref(upOrDown) ? key - 1 : key;
+        comps.splice(index, 0, {
+          name: name,
+          type: 'passwordInput',
+          active: false,
+          activeIsDrag: false,
+        });
       }
     };
+
+    // 复制组件
+    const copyComp = (key) => {
+      const randomNum = random();
+      const name = 'name_' + randomNum;
+      comps.splice(key + 1, 0, {
+        name: name,
+        type: comps[key].type,
+        active: false,
+        activeIsDrag: false,
+      });
+    }
+
+    // 删除组件
+    const deleteComp = (key) => {
+      comps.splice(key, 1);
+    }
 
     return {
       Search,
       formVal,
       menuList,
-      inputCompData,
       comps,
       activeCanvas,
       mousedown,
       mouseup,
+      isAppend,
+      copyComp,
+      deleteComp
     };
   },
 });

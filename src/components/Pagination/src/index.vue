@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ hidden: hidden }" class="pagination-container">
+  <div v-if="!hidden" class="pagination-container">
     <div class="pc-total">共 {{ total }} 条</div>
     <el-pagination
       :background="background"
@@ -8,15 +8,15 @@
       v-model:page-sizes="pageSizes"
       :layout="layout"
       :total="total"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
+      @current-change="pageChangeHandle"
+      @size-change="sizeChangeHandle"
     />
   </div>
 </template>
 
 <script lang="ts">
 // import { scrollTo } from '@/utils/scrollTo';
-import { computed, defineComponent, reactive, toRefs } from 'vue';
+import { computed, defineComponent, reactive, toRefs, unref } from 'vue';
 import type { PropType, Ref } from 'vue';
 
 export default defineComponent({
@@ -62,18 +62,18 @@ export default defineComponent({
       autoScroll,
     }: { page: Ref<number>; limit: Ref<number>; autoScroll: Ref<boolean> } = toRefs(props);
 
-    const handleCurrentChange = val => {
-      ctx.emit('pagination', { page: val, limit: limit.value });
+    const pageChangeHandle = val => {
       ctx.emit('update:page', val);
+      ctx.emit('pagination', { page: val, limit: unref(limit) });
       if (autoScroll) {
         // scrollTo(0, 800);
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
       }
     };
 
-    const handleSizeChange = val => {
-      ctx.emit('pagination', { page: page.value, limit: val });
+    const sizeChangeHandle = val => {
       ctx.emit('update:limit', val);
+      ctx.emit('pagination', { page: unref(page), limit: val });
       if (autoScroll) {
         // scrollTo(0, 800);
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -81,9 +81,9 @@ export default defineComponent({
     };
 
     return {
-      handleSizeChange,
-      handleCurrentChange,
-      ...toRefs(props),
+      pageChangeHandle,
+      sizeChangeHandle,
+      ...props,
     };
   },
 });

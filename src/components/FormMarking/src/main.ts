@@ -1,5 +1,4 @@
-import data from './datas/inputComp.json';
-import Vue, { h } from 'vue';
+import { h } from 'vue';
 
 class compHandle {
   private type: string;
@@ -7,9 +6,9 @@ class compHandle {
     this.config = config;
     this.type = config.type;
   }
-  render() {
-    const component = h(this.config?.component, {
-      itemConfig: this.config,
+  render(config) {
+    const component = h(config.component, {
+      itemConfig: config,
       type: this.type
     });
     return component;
@@ -19,42 +18,43 @@ class compHandle {
     this.type = type;
     this.config = Object.assign({}, this.config, {type});
   }
+
+  setState(config) {
+    this.config = Object.assign({}, config);
+  }
 }
 
 const compFactory = (function () {
-  const caches = {};
+  const dataBase = {};
 
   return {
-    create: function (handle, type: string) {
-      if (caches[type]) {
-        return handle.render();
+    create: function (handle, config) {
+      const type = config.type || config.component.name;
+      if (!dataBase[type]) {
+        dataBase[type] = config;
       }
-      caches[type] = handle;
-      handle.setType(type);
-      console.log('config', handle.config)
-      return handle.render();
+
+      console.log('config', dataBase[type])
+      return handle.render(dataBase[type]);
     }
   }
 })();
 
 function createCompConfig() {
-  const componentsList: any[] = [];
   const componentsMap = new Map();
 
   return {
-    componentsList,
     componentsMap,
     register: (config) => {
       let handle: any;
-      if (!componentsMap.get(config.componentName)) {
+      if (!componentsMap.get(config.component.name)) {
         handle = new compHandle(config);
-        componentsList.push(handle);
-        componentsMap.set(config.componentName, handle);
+        componentsMap.set(config.component.name, handle);
       } else {
-        handle = componentsMap.get(config.componentName);
+        handle = componentsMap.get(config.component.name);
       }
       
-      return compFactory.create(handle, config.type || config.componentName);
+      return compFactory.create(handle, config);
     }
   }
 }

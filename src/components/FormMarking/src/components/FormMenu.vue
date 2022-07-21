@@ -14,7 +14,7 @@ export default {
     },
   },
   setup(props) {
-    const { menuList } = toRefs(props);
+    const { menuList } = props;
     return {
       menuList,
     };

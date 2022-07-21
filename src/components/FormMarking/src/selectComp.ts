@@ -4,7 +4,6 @@ import SelectComp from './components/SelectComp.vue';
 
 const selectComp = registerConfig.register({
   ...data,
-  componentName: 'SelectComp',
   component: SelectComp
 });
 
