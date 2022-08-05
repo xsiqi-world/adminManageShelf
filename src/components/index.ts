@@ -6,6 +6,12 @@ const components = {
   Menu
 };
 
+// 单独引用
+export {
+  Pagination,
+  Menu
+};
+
 const install = (app, options) => {
   for (let key in components) {
     app.use(components[key]);
@@ -13,12 +19,12 @@ const install = (app, options) => {
   console.log(options);
 }
 
-const TUI = {
-  install
-}
-
-// 单独引用
-export { Pagination, Menu };
+// const TUI = {
+//   install
+// }
 
 // 全局引用
-export default TUI;
+// export default TUI;
+export default {
+  install
+};

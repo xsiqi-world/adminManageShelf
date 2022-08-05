@@ -1,16 +1,16 @@
 <script lang="ts">
 import { h, defineComponent, toRefs, ref } from 'vue';
 import type { PropType } from 'vue';
-import { ElFormItem, ElDatePicker } from 'element-plus';
+import { ElFormItem, ElCheckboxGroup, ElCheckbox } from 'element-plus';
 
 export default defineComponent({
-  name: 'datePicker',
+  name: 'checkboxComp',
   props: {
     itemConfig: {
       type: Object as PropType<object>,
     },
     itemValue: {
-      type: [Date, Array],
+      type: Array,
     },
   },
   setup(props, { attrs, emit }) {
@@ -26,16 +26,25 @@ export default defineComponent({
           labelWidth: itemConfig.labelWidth || 'auto',
         },
         () => [
-          h(ElDatePicker, {
-            ...attrs,
-            type: itemConfig.type,
-            modelValue: compValue.value,
-            'onUpdate:modelValue': value => {
-              // console.log(value);
-              compValue.value = value;
-              emit('update:itemValue', value);
+          h(
+            ElCheckboxGroup,
+            {
+              ...attrs,
+              modelValue: compValue.value,
+              'onUpdate:modelValue': value => {
+                // console.log(value);
+                compValue.value = value;
+                emit('update:itemValue', value);
+              },
             },
-          }),
+            () => [
+              itemConfig.options.map(item => {
+                return h(ElCheckbox, {
+                  label: item.label
+                });
+              }),
+            ]
+          ),
         ]
       );
   },

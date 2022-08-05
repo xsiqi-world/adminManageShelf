@@ -40,7 +40,7 @@ export default defineComponent({
     },
     layout: {
       type: String as PropType<string>,
-      default: 'sizes, prev, pager, next, jumper',
+      default: () => 'sizes, prev, pager, next, jumper',
     },
     background: {
       type: Boolean as PropType<boolean>,

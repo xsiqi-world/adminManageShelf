@@ -33,7 +33,8 @@ img {
 
 /* 去掉无序列表前面的小点 */
 ul,
-ol {
+ol,
+li {
   list-style: none;
 }
 

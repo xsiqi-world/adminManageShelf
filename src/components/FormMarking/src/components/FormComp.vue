@@ -1,6 +1,5 @@
 <script lang="ts">
-import { h, defineComponent, ref, toRefs } from 'vue';
-import type { PropType } from 'vue';
+import { h, defineComponent } from 'vue';
 import { ElForm } from "element-plus";
 
 export default defineComponent({
@@ -11,7 +10,7 @@ export default defineComponent({
     return () =>
       h(
         ElForm,
-        attrs,
+        {...props, ...attrs},
         slots
       );
   },

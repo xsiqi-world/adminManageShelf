@@ -52,5 +52,5 @@ export const renderLoading = () => {
   }
 
   // 销毁组件
-  return { vNode, destroy };
+  // return { vNode, destroy };
 };

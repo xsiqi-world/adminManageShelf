@@ -1,0 +1,31 @@
+{
+  "width": "150",
+  "name": "name",
+  "title": "Activity name",
+  "className": [],
+  "options": [
+    {
+      "label": "label1"
+    },
+    {
+      "label": "label2"
+    },
+    {
+      "label": "label3"
+    }
+  ],
+  "require": true,
+  "size": "default",
+  "operation": [
+    {
+      "title": "禁用",
+      "attr": "disabled",
+      "value": false
+    },
+    {
+      "title": "显示清除按钮",
+      "attr": "clearable",
+      "value": false
+    }
+  ]
+}

@@ -14,14 +14,14 @@ class compHandle {
     return component;
   }
 
-  setType(type) {
-    this.type = type;
-    this.config = Object.assign({}, this.config, {type});
-  }
+  // setType(type) {
+  //   this.type = type;
+  //   this.config = Object.assign({}, this.config, {type});
+  // }
 
-  setState(config) {
-    this.config = Object.assign({}, config);
-  }
+  // setState(config) {
+  //   this.config = Object.assign({}, config);
+  // }
 }
 
 const compFactory = (function () {
@@ -34,7 +34,8 @@ const compFactory = (function () {
         dataBase[type] = config;
       }
 
-      console.log('config', dataBase[type])
+      console.log('config', dataBase[type]);
+      
       return handle.render(dataBase[type]);
     }
   }
@@ -47,11 +48,12 @@ function createCompConfig() {
     componentsMap,
     register: (config) => {
       let handle: any;
-      if (!componentsMap.get(config.component.name)) {
+      const componentName = config.component.name || '';
+      if (!componentsMap.get(componentName)) {
         handle = new compHandle(config);
-        componentsMap.set(config.component.name, handle);
+        componentsMap.set(componentName, handle);
       } else {
-        handle = componentsMap.get(config.component.name);
+        handle = componentsMap.get(componentName);
       }
       
       return compFactory.create(handle, config);

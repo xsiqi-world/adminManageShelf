@@ -1,11 +1,11 @@
 <template>
   <div class="formMarking">
     <div class="menus">
-      <FormMenu :menuList="menuList"></FormMenu>
+      <FormMenu></FormMenu>
     </div>
     <div class="canvas">
       <div class="canvas-container">
-        <li class="line" :style="{ display: isAppend ? 'block' : 'none' }"></li>
+        <li class="line" v-show="isAppend"></li>
         <FormComp :model="formVal">
           <div
             class="canvas-container__item"
@@ -17,10 +17,11 @@
             :draggable="item.activeIsDrag"
           >
 
-            <component :is="item.type" v-model:itemValue="formVal[item.name]"></component>
+            <component :is="item.type" v-model:itemConfig="item.config" v-model:itemValue="formVal[item.name]"></component>
+
             <div v-if="comps[key].active" class="widget-view-action">
-              <el-icon @click="() => copyComp(key)"><DocumentCopy /></el-icon>
-              <el-icon @click="() => deleteComp(key)"><DeleteFilled /></el-icon>
+              <el-icon @click="copyComp(key)"><DocumentCopy /></el-icon>
+              <el-icon @click="deleteComp(key)"><DeleteFilled /></el-icon>
             </div>
             <div
               v-if="comps[key].active"
@@ -37,19 +38,18 @@
         </FormComp>
       </div>
     </div>
-    <div class="config"></div>
-    <el-button :icon="Search">Search</el-button>
+
+    <AdjustConfig v-model:configs="comps[activeIndex].config"></AdjustConfig>
   </div>
 </template>
 
 <script lang="ts">
-import { Search } from '@element-plus/icons-vue';
-import { defineComponent, onMounted, ref, unref, reactive, nextTick } from 'vue';
+import { defineComponent, onMounted, ref, unref, reactive, nextTick, computed } from 'vue';
 import type { Ref } from 'vue';
 import { throttle } from '/@/utils/index';
 import FormComp from './components/FormComp.vue';
-import formMenuList from './datas/formMenu.json';
-import useDrag, { setDragstart } from '/@/hooks/event/useDrag';
+import AdjustConfig from './components/AdjustConfig.vue';
+import { setDragstart } from './hooks/useDrag';
 
 import FormMenu from './components/FormMenu.vue';
 import comp from './index';
@@ -58,40 +58,45 @@ export default defineComponent({
   components: {
     FormComp,
     FormMenu,
+    AdjustConfig,
     ...comp
   },
   setup() {
-    const menuList = formMenuList;
     const comps = reactive([
       {
         name: 'name1',
         type: 'textInput',
-        active: false,
+        active: true,
         activeIsDrag: false,
+        config: Object.assign({}, comp['textInput'].props.itemConfig)
       },
       {
         name: 'name2',
         type: 'textInput',
         active: false,
         activeIsDrag: false,
+        config: Object.assign({}, comp['textInput'].props.itemConfig)
       },
       {
         name: 'name3',
         type: 'passwordInput',
         active: false,
         activeIsDrag: false,
+        config: Object.assign({}, comp['passwordInput'].props.itemConfig)
       },
       {
         name: 'name4',
         type: 'selectComp',
         active: false,
         activeIsDrag: false,
+        config: Object.assign({}, comp['selectComp'].props.itemConfig)
       },
       {
         name: 'name5',
         type: 'daterangePicker',
         active: false,
         activeIsDrag: false,
+        config: Object.assign({}, comp['daterangePicker'].props.itemConfig)
       },
     ]);
     const formVal = reactive({
@@ -103,7 +108,7 @@ export default defineComponent({
     });
     
     const draging = ref() as Ref<Element>;
-    let overDraging: HTMLElement;
+    const overDraging = ref() as Ref<Element>;
     const overIndex = ref(0); // 松手时的元素key
     const activeIndex = ref(0); // 选中的元素key
     const upOrDown = ref(1); // 1:上，0:下
@@ -116,7 +121,8 @@ export default defineComponent({
       setDragstart(menusNode, draging);
       setDragstart(canvasContainer, draging);
       // 在区域中移动触发
-      canvasContainer.addEventListener('dragover', throttle(canvasDragover, 100), true);
+      // canvasContainer.addEventListener('dragover', throttle(canvasDragover, 100), true);
+      canvasContainer.addEventListener('dragover', canvasDragover, false);
 
       canvasContainer.addEventListener(
         'dragenter',
@@ -146,16 +152,20 @@ export default defineComponent({
     });
 
     const menusDragend = function (e) {
+      const target = e.target;
       console.log('松手了', unref(overIndex), e.target);
 
       setTimeout(() => {
         comps[unref(activeIndex)].activeIsDrag = false;
 
-        appendComp(unref(isAppend), unref(overIndex));
+        if (unref(isAppend)) {
+          // 插入组件
+          appendComp(unref(overIndex), target.getAttribute('data-type'));
+        }
+
+        console.log('comps', comps);
 
         isAppend.value = false;
-
-        console.log(comps, formVal);
       }, 300);
     };
 
@@ -165,7 +175,7 @@ export default defineComponent({
       setTimeout(() => {
         console.log(unref(activeIndex), unref(overIndex));
 
-        // const dragingRect: DOMRect = overDraging.getBoundingClientRect();
+        // const dragingRect: DOMRect = unref(overDraging).getBoundingClientRect();
         // const targetRect: DOMRect = target.getBoundingClientRect();
 
         nextTick(() => {
@@ -187,9 +197,9 @@ export default defineComponent({
           isAppend.value = false;
         });
 
-        // target.parentNode.insertBefore(overDraging, target);
+        // target.parentNode.insertBefore(unref(overDraging), target);
 
-        // _animate(dragingRect, overDraging);
+        // _animate(dragingRect, unref(overDraging));
         // _animate(targetRect, target);
       }, 300);
     };
@@ -205,7 +215,7 @@ export default defineComponent({
       if (target.animated) {
         return;
       }
-      const dragingRect: DOMRect = line.getBoundingClientRect();
+      const lineRect: DOMRect = line.getBoundingClientRect();
       const targetRect: DOMRect = target.getBoundingClientRect();
       const y = e.offsetY;
       if (y > target.offsetHeight / 2) {
@@ -218,12 +228,12 @@ export default defineComponent({
         target.parentNode.insertBefore(line, target);
       }
 
-      _animate(dragingRect, line);
+      _animate(lineRect, line);
       _animate(targetRect, target);
 
       const key = target.getAttribute('data-key');
       overIndex.value = key;
-      overDraging = target;
+      overDraging.value = target;
 
       // console.log('进来了', target, e.offsetX, e.offsetY, target.offsetHeight, e);
     };
@@ -315,23 +325,22 @@ export default defineComponent({
       comps[key].activeIsDrag = false;
     };
 
-    // 插入comp
-    const appendComp = (isAppend, key) => {
-      if (isAppend) {
-        const randomNum = random();
-        const name = 'name_' + randomNum;
-        formVal[name] = randomNum;
-        const index = unref(upOrDown) ? key - 1 : key;
-        comps.splice(index, 0, {
-          name: name,
-          type: 'passwordInput',
-          active: false,
-          activeIsDrag: false,
-        });
-      }
+    // TODO:插入comp
+    const appendComp = (key: number, type: string) => {
+      const randomNum = random();
+      const name = 'name_' + randomNum;
+      // formVal[name] = randomNum;
+      const index = unref(upOrDown) ? key - 1 : key;
+      comps.splice(index, 0, {
+        name: name,
+        type: type,
+        active: false,
+        activeIsDrag: false,
+        config: Object.assign({}, comp[type].props.itemConfig)
+      });
     };
 
-    // 复制组件
+    // TODO:复制组件
     const copyComp = (key) => {
       const randomNum = random();
       const name = 'name_' + randomNum;
@@ -340,23 +349,23 @@ export default defineComponent({
         type: comps[key].type,
         active: false,
         activeIsDrag: false,
+        config: comps[key].config
       });
     }
 
-    // 删除组件
+    // TODO:删除组件
     const deleteComp = (key) => {
       comps.splice(key, 1);
     }
 
     return {
-      Search,
+      isAppend,
       formVal,
-      menuList,
       comps,
+      activeIndex,
       activeCanvas,
       mousedown,
       mouseup,
-      isAppend,
       copyComp,
       deleteComp
     };
@@ -367,15 +376,15 @@ export default defineComponent({
 <style lang="scss" scoped>
 .formMarking {
   display: flex;
-  align-items: flex-start;
-  align-content: flex-start;
+  // align-items: flex-start;
+  // align-content: flex-start;
   .menus {
-    width: 300px;
+    width: 230px;
     // height: 500px;
     height: 100%;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
+    // display: flex;
+    // justify-content: space-between;
+    // flex-wrap: wrap;
     margin-right: 10px;
   }
 
@@ -384,9 +393,8 @@ export default defineComponent({
     height: 500px;
     position: relative;
     background: #fff;
-    align-self: center;
     box-shadow: 0 4px 12px #ebedf0;
-    overflow: auto;
+    overflow-y: auto;
     padding: 5px;
 
     .line {
@@ -401,7 +409,7 @@ export default defineComponent({
     }
 
     .canvas-container {
-      min-height: 100%;
+      // min-height: 100%;
 
       .canvas-container__item {
         user-select: none;
@@ -414,6 +422,12 @@ export default defineComponent({
           border: 1px solid #409eff;
         }
 
+        &:hover {
+          background: #ecf5ff;
+          border: 1px solid #409eff;
+        }
+
+        // 选中的遮罩
         // &:after {
         //   position: absolute;
         //   left: 0;
@@ -487,12 +501,5 @@ export default defineComponent({
   .append-after::after {
     bottom: 0;
   }
-}
-</style>
-
-<style>
-ul,
-li {
-  list-style: none;
 }
 </style>
