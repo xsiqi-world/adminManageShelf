@@ -1,5 +1,5 @@
 <script lang="ts">
-import { h, defineComponent, toRefs, watch } from 'vue';
+import { h, defineComponent, toRefs, watch, ref } from 'vue';
 import type { PropType } from 'vue';
 import { ElFormItem, ElSelect, ElOption } from 'element-plus';
 
@@ -16,36 +16,61 @@ export default defineComponent({
   setup(props, { attrs, emit }) {
     const { itemConfig }: { itemConfig: any } = props;
     const { itemValue } = toRefs(props);
+    const compValue = ref();
 
     return () =>
-      h(
-        ElFormItem,
-        {
-          label: itemConfig.title,
-          labelWidth: itemConfig.labelWidth || 'auto',
-        },
-        () => [
-          h(
-            ElSelect,
-            {
-              ...attrs,
-              modelValue: itemValue.value,
-              'onUpdate:modelValue': value => {
-                // console.log(value);
-                emit('update:itemValue', value);
-              },
+      // h(
+      //   ElFormItem,
+      //   {
+      //     label: itemConfig.title,
+      //     labelWidth: itemConfig.labelWidth || '',
+      //   },
+      //   () => [
+      //     h(
+      //       ElSelect,
+      //       {
+      //         ...attrs,
+      //         modelValue: itemValue.value,
+      //         'onUpdate:modelValue': value => {
+      //           // console.log(value);
+      //           emit('update:itemValue', value);
+      //         },
+      //       },
+      //       () => [
+      //         itemConfig.options.map(item => {
+      //           return h(ElOption, {
+      //             label: item.label,
+      //             value: item.value,
+      //           });
+      //         }),
+      //       ]
+      //     ),
+      //   ]
+      // );
+
+      [
+        h(
+          ElSelect,
+          {
+            ...attrs,
+            style: ['width', 'height'].map(item => `${item}:${itemConfig[item]}px`).join(';'),
+            modelValue: itemValue.value,
+            'onUpdate:modelValue': value => {
+              // console.log(value);
+              compValue.value = value;
+              emit('update:itemValue', value);
             },
-            () => [
-              itemConfig.options.map(item => {
-                return h(ElOption, {
-                  label: item.label,
-                  value: item.value,
-                });
-              }),
-            ]
-          ),
-        ]
-      );
+          },
+          () => [
+            itemConfig.options.map(item => {
+              return h(ElOption, {
+                label: item.label,
+                value: item.value,
+              });
+            }),
+          ]
+        )
+      ];
   },
 });
 </script>

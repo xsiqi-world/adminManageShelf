@@ -19,34 +19,57 @@ export default defineComponent({
     const compValue = ref();
 
     return () =>
-      h(
-        ElFormItem,
-        {
-          label: itemConfig.title,
-          labelWidth: itemConfig.labelWidth || 'auto',
-        },
-        () => [
-          h(
-            ElCheckboxGroup,
-            {
-              ...attrs,
-              modelValue: compValue.value,
-              'onUpdate:modelValue': value => {
-                // console.log(value);
-                compValue.value = value;
-                emit('update:itemValue', value);
-              },
+      // h(
+      //   ElFormItem,
+      //   {
+      //     label: itemConfig.title,
+      //     labelWidth: itemConfig.labelWidth || '',
+      //   },
+      //   () => [
+      //     h(
+      //       ElCheckboxGroup,
+      //       {
+      //         ...attrs,
+      //         modelValue: compValue.value,
+      //         'onUpdate:modelValue': value => {
+      //           // console.log(value);
+      //           compValue.value = value;
+      //           emit('update:itemValue', value);
+      //         },
+      //       },
+      //       () => [
+      //         itemConfig.options.map(item => {
+      //           return h(ElCheckbox, {
+      //             label: item.label
+      //           });
+      //         }),
+      //       ]
+      //     ),
+      //   ]
+      // );
+
+      [
+        h(
+          ElCheckboxGroup,
+          {
+            ...attrs,
+            style: ['width', 'height'].map(item => `${item}:${itemConfig[item]}px`).join(';'),
+            modelValue: compValue.value,
+            'onUpdate:modelValue': value => {
+              // console.log(value);
+              compValue.value = value;
+              emit('update:itemValue', value);
             },
-            () => [
-              itemConfig.options.map(item => {
-                return h(ElCheckbox, {
-                  label: item.label
-                });
-              }),
-            ]
-          ),
-        ]
-      );
+          },
+          () => [
+            itemConfig.options.map(item => {
+              return h(ElCheckbox, {
+                label: item.label
+              });
+            }),
+          ]
+        )
+      ];
   },
 });
 </script>

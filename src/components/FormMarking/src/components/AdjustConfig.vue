@@ -21,31 +21,53 @@
         <el-input v-model="configs.title" placeholder="Please input" />
       </div>
     </div>
+
+    <div class="config-item">
+      <label class="config-label">默认值{{ compType }}</label>
+      <div class="config-content">
+        <component
+          :is="compType"
+          v-model:itemConfig="configs"
+          v-model:itemValue="formVal[configs.name]"
+        ></component>
+      </div>
+    </div>
     
   </div>
 </template>
 
 <script>
-import { ref, unref, toRefs, watch } from 'vue';
-export default {
+import { defineComponent, ref, unref, toRefs, watch, reactive } from 'vue';
+import comp from '../index';
+
+export default defineComponent({
+  components: {
+    ...comp
+  },
   props: {
     configs: {
       type: Object
+    },
+    compType: {
+      type: String
     }
   },
   setup(props, { emit }) {
-    const { configs } = toRefs(props);
+    const { configs, compType } = toRefs(props);
+    const formVal = reactive({});
 
     watch(configs, (configs, prevConfigs) => {
-      console.log(configs);
+      console.log(configs, compType.value);
       emit('update:configs', configs);
     });
 
     return {
-      configs
+      configs,
+      compType,
+      formVal
     };
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

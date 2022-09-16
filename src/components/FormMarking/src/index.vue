@@ -16,8 +16,13 @@
             @click="activeCanvas(key)"
             :draggable="item.activeIsDrag"
           >
-
-            <component :is="item.type" v-model:itemConfig="item.config" v-model:itemValue="formVal[item.name]"></component>
+            <el-form-item :label="item.label" labelWidth="">
+              <component
+                :is="item.type"
+                v-model:itemConfig="item.config"
+                v-model:itemValue="formVal[item.name]"
+              ></component>
+            </el-form-item>
 
             <div v-if="comps[key].active" class="widget-view-action">
               <el-icon @click="copyComp(key)"><DocumentCopy /></el-icon>
@@ -39,7 +44,10 @@
       </div>
     </div>
 
-    <AdjustConfig v-model:configs="comps[activeIndex].config"></AdjustConfig>
+    <AdjustConfig
+      v-model:compType="comps[activeIndex].type"
+      v-model:configs="comps[activeIndex].config"
+    ></AdjustConfig>
   </div>
 </template>
 
@@ -66,6 +74,7 @@ export default defineComponent({
       {
         name: 'name1',
         type: 'textInput',
+        label: comp['textInput'].props.itemConfig.title,
         active: true,
         activeIsDrag: false,
         config: Object.assign({}, comp['textInput'].props.itemConfig)
@@ -73,6 +82,7 @@ export default defineComponent({
       {
         name: 'name2',
         type: 'textInput',
+        label: comp['textInput'].props.itemConfig.title,
         active: false,
         activeIsDrag: false,
         config: Object.assign({}, comp['textInput'].props.itemConfig)
@@ -80,6 +90,7 @@ export default defineComponent({
       {
         name: 'name3',
         type: 'passwordInput',
+        label: comp['passwordInput'].props.itemConfig.title,
         active: false,
         activeIsDrag: false,
         config: Object.assign({}, comp['passwordInput'].props.itemConfig)
@@ -87,6 +98,7 @@ export default defineComponent({
       {
         name: 'name4',
         type: 'selectComp',
+        label: comp['selectComp'].props.itemConfig.title,
         active: false,
         activeIsDrag: false,
         config: Object.assign({}, comp['selectComp'].props.itemConfig)
@@ -94,9 +106,18 @@ export default defineComponent({
       {
         name: 'name5',
         type: 'daterangePicker',
+        label: comp['daterangePicker'].props.itemConfig.title,
         active: false,
         activeIsDrag: false,
         config: Object.assign({}, comp['daterangePicker'].props.itemConfig)
+      },
+      {
+        name: 'name6',
+        type: 'dateTimePicker',
+        label: comp['dateTimePicker'].props.itemConfig.title,
+        active: false,
+        activeIsDrag: false,
+        config: Object.assign({}, comp['dateTimePicker'].props.itemConfig)
       },
     ]);
     const formVal = reactive({
@@ -180,10 +201,10 @@ export default defineComponent({
 
         nextTick(() => {
           const splice = comps.splice(unref(activeIndex), 1)[0];
-          if (upOrDown.value) {
-            comps.splice(unref(overIndex) - 1, 0, splice);
+          if (!!upOrDown.value) {
+            comps.splice(resetNum(unref(overIndex) - 2), 0, splice);
           } else {
-            comps.splice(unref(overIndex), 0, splice);
+            comps.splice(resetNum(unref(overIndex) - 1), 0, splice);
           }
 
           console.log(unref(overIndex) - 1, upOrDown.value)
@@ -334,6 +355,7 @@ export default defineComponent({
       comps.splice(index, 0, {
         name: name,
         type: type,
+        label: comp[type].props.itemConfig.title,
         active: false,
         activeIsDrag: false,
         config: Object.assign({}, comp[type].props.itemConfig)
@@ -347,6 +369,7 @@ export default defineComponent({
       comps.splice(key + 1, 0, {
         name: name,
         type: comps[key].type,
+        label: comps[key].label,
         active: false,
         activeIsDrag: false,
         config: comps[key].config
@@ -356,6 +379,10 @@ export default defineComponent({
     // TODO:删除组件
     const deleteComp = (key) => {
       comps.splice(key, 1);
+    }
+
+    const resetNum = (num) => {
+      return num < 0 ? 0 : num;
     }
 
     return {
@@ -394,7 +421,7 @@ export default defineComponent({
     position: relative;
     background: #fff;
     box-shadow: 0 4px 12px #ebedf0;
-    overflow-y: auto;
+    overflow: auto;
     padding: 5px;
 
     .line {
