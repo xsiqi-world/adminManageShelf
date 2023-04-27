@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router';
 import { getSession } from '/@/utils';
+import { ElMessage } from 'element-plus';
 
 const routes = [
   {
@@ -55,7 +56,10 @@ const routes = [
     path: '/formMarking',
     name: 'formMarking',
     component: () => import('../pages/formMarking/index'),
-    meta: {},
+    meta: {
+      keepAlive: true,
+      requiresAuth: true,
+    },
   },
 ];
 
@@ -84,9 +88,14 @@ router.beforeEach((to, from) => {
   // 而不是去检查每条路由记录
   // to.matched.some(record => record.meta.requiresAuth)
   // if (to.meta.requiresAuth && !auth.isLoggedIn()) {
-  if (to.meta.requiresAuth && getSession('AccessToken')) {
+  if (to.meta.requiresAuth && !getSession('AccessToken')) {
     // 此路由需要授权，请检查是否已登录
     // 如果没有，则重定向到登录页面
+    ElMessage({
+      showClose: true,
+      message: '用户验证有误, 请重新登录',
+      type: 'error',
+    });
     return {
       path: '/login',
       // 保存我们所在的位置，以便以后再来

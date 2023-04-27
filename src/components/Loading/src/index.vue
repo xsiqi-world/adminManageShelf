@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, toRefs } from 'vue';
+import { defineComponent, ref, toRefs, unref } from 'vue';
 import type { PropType } from 'vue';
 export default defineComponent({
   name: 'loading',
@@ -48,14 +48,15 @@ export default defineComponent({
     const showLoadingFlag = ref(true);
 
     const closeMyself = (state: boolean = false) => {
-      console.log('hhh');
-      if (state) {
+      console.log('hhh', unref(closeOnClickModal));
+      if (unref(closeOnClickModal)) {
         ctx.emit('close');
       }
     };
     return {
       showLoadingFlag,
       closeMyself,
+      closeOnClickModal
     };
   },
 });
@@ -63,6 +64,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .loading {
+  
 }
 
 .c-c-c {

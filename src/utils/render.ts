@@ -1,4 +1,5 @@
 import Vue, { createVNode, render, h } from 'vue';
+import type { Component } from 'vue';
 import { Loading } from '/@/components/Loading/index';
 
 /**
@@ -7,7 +8,7 @@ import { Loading } from '/@/components/Loading/index';
  * @param component 组件
  * @param params 组件参数
  */
-export const createComponent = (hostEl: HTMLElement, component: any, params?: any) => {
+export const createComponent = (hostEl: HTMLElement, component: Component, params?: any) => {
   // 创建虚拟节点
   let vNode: Vue.VNode | null = h(component, params);
   // 渲染并挂载到宿主节点
@@ -28,6 +29,7 @@ export const renderLoading = () => {
   // 创建组件
   const props = {
       // ...
+      closeOnClickModal: true
     },
     eventHandlers = {
       onClick: () => {},

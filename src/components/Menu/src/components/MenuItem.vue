@@ -21,7 +21,7 @@
     }"
   >
     <el-icon><setting /></el-icon>
-    <template #title>{{ item.name }}</template>
+    <template #title>{{ item.title }}</template>
   </el-menu-item>
 </template>
 

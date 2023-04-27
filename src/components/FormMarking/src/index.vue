@@ -6,11 +6,11 @@
     <div class="canvas">
       <div class="canvas-container">
         <li class="line" v-show="isAppend"></li>
-        <FormComp :model="formVal">
+        <el-form :model="formVal">
           <div
             class="canvas-container__item"
             :class="[comps[key].active ? 'active' : '']"
-            :data-key="key + 1"
+            :data-key="key"
             :key="item.name"
             v-for="(item, key) in comps"
             @click="activeCanvas(key)"
@@ -40,21 +40,21 @@
             <div class="widget-view-model"><span>{{ item.name }}</span></div>
 
           </div>
-        </FormComp>
+        </el-form>
       </div>
     </div>
 
-    <AdjustConfig
+    <!-- <AdjustConfig
       v-model:compType="comps[activeIndex].type"
       v-model:configs="comps[activeIndex].config"
-    ></AdjustConfig>
+    ></AdjustConfig> -->
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted, ref, unref, reactive, nextTick, computed } from 'vue';
 import type { Ref } from 'vue';
-import { throttle } from '/@/utils/index';
+import { throttle, copyObj } from '/@/utils/index';
 import FormComp from './components/FormComp.vue';
 import AdjustConfig from './components/AdjustConfig.vue';
 import { setDragstart } from './hooks/useDrag';
@@ -193,21 +193,37 @@ export default defineComponent({
     const canvasDragend = function (e) {
       comps[unref(activeIndex)].activeIsDrag = false;
       const target = e.target;
-      setTimeout(() => {
-        console.log(unref(activeIndex), unref(overIndex));
+      // const splice = comps.splice(unref(activeIndex), 1)[0];
+      const splice = copyObj(comps[unref(activeIndex)]);
+      comps.splice(unref(activeIndex), 1);
+      // setTimeout(() => {
 
-        // const dragingRect: DOMRect = unref(overDraging).getBoundingClientRect();
-        // const targetRect: DOMRect = target.getBoundingClientRect();
+        const dragingRect: DOMRect = unref(overDraging).getBoundingClientRect();
+        const targetRect: DOMRect = target.getBoundingClientRect();
 
         nextTick(() => {
-          const splice = comps.splice(unref(activeIndex), 1)[0];
-          if (!!upOrDown.value) {
-            comps.splice(resetNum(unref(overIndex) - 2), 0, splice);
+          // const splice = comps.splice(unref(activeIndex), 1)[0];
+          if (!!unref(upOrDown)) {
+            let index = unref(overIndex);
+            if (unref(overIndex) == comps.length - 1) {
+              index = unref(overIndex) - 1;
+            } else if (unref(overIndex) == 0) {
+              index = unref(overIndex);
+            }
+            // 上
+            comps.splice(resetNum(index), 0, splice);
           } else {
-            comps.splice(resetNum(unref(overIndex) - 1), 0, splice);
+            let index = unref(overIndex);
+            if (unref(overIndex) == comps.length - 1) {
+              index = unref(overIndex);
+            } else if (unref(overIndex) == 0) {
+              index = unref(overIndex) + 1;
+            }
+            // 下
+            comps.splice(index, 0, splice);
           }
 
-          console.log(unref(overIndex) - 1, upOrDown.value)
+          console.log(unref(overIndex), comps.length);
 
           // comps[unref(overIndex) - 1] = comps.splice(
           //   unref(activeIndex),
@@ -222,7 +238,7 @@ export default defineComponent({
 
         // _animate(dragingRect, unref(overDraging));
         // _animate(targetRect, target);
-      }, 300);
+      // }, 300);
     };
 
     const canvasDragover = function (e) {
@@ -253,7 +269,7 @@ export default defineComponent({
       _animate(targetRect, target);
 
       const key = target.getAttribute('data-key');
-      overIndex.value = key;
+      overIndex.value = Number(key);
       overDraging.value = target;
 
       // console.log('进来了', target, e.offsetX, e.offsetY, target.offsetHeight, e);
@@ -382,7 +398,7 @@ export default defineComponent({
     }
 
     const resetNum = (num) => {
-      return num < 0 ? 0 : num;
+      return num <= 0 ? 0 : num;
     }
 
     return {
@@ -403,6 +419,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .formMarking {
   display: flex;
+  height: 100%;
   // align-items: flex-start;
   // align-content: flex-start;
   .menus {

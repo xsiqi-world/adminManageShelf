@@ -22,7 +22,7 @@ declare module 'vue' {
     FormMenu: typeof import('./src/components/FormMarking/src/components/FormMenu.vue')['default']
     Heading: typeof import('./src/components/Heading.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
-    Increasing: typeof import('./src/components/Increasing.vue')['default']
+    Increasing: typeof import('./src/components/increasing.vue')['default']
     InputComp: typeof import('./src/components/FormMarking/src/components/InputComp.vue')['default']
     LayoutFooter: typeof import('./src/components/Layout/src/components/LayoutFooter.vue')['default']
     LayoutUserInfo: typeof import('./src/components/Layout/src/components/LayoutUserInfo.vue')['default']

@@ -10,6 +10,7 @@
           background-color="#545c64"
           text-color="#fff"
           v-model:isCollapse="isCollapse"
+          :list="menuList"
         ></Menu>
       </div>
     </div>
@@ -36,19 +37,51 @@
 </template>
 
 <script setup lang="ts">
-import { getCurrentInstance, onMounted, onUnmounted, ref } from 'vue';
+import { getCurrentInstance, onMounted, onUnmounted, reactive, ref } from 'vue';
 import { Menu } from '/@/components/index';
 import LayoutFooter from './components/LayoutFooter.vue';
 import LayoutUserInfo from './components/LayoutUserInfo.vue';
+import { getSession } from '/@/utils';
+
+interface menuType {
+  id: number,
+  is_menu: number,
+  level: number,
+  name: string,
+  pid: number,
+  status: number,
+  title: string,
+  url?: string | null
+}
 
 // 获取全局数据
 const { proxy }: any = getCurrentInstance();
 const title = proxy.$title;
 const isCollapse = ref(false);
+const menuList: any[] = reactive([]);
 
 const checkCollapse = () => {
   isCollapse.value = !isCollapse.value;
 };
+
+const userMenu: never[] = getSession('menu') || [];
+menuList.push(...userMenu);
+const menuParse = (list, pid = 0) => {
+  if (list instanceof Array) {
+    list.forEach((item, key) => {
+      if (item.pid == 0) {
+        item.children = [];
+        menuList.push(item);
+        menuParse(userMenu, item.pid);
+      } else if (item.id == pid) {
+        return item;
+      }
+    })
+  }
+}
+
+// menuParse(userMenu, 0);
+console.log('menuList', menuList);
 
 const handleMenuList = [
   {
@@ -85,7 +118,7 @@ function resize() {
 
 onMounted(() => {
   console.log('组件加载');
-  //resize：屏幕的大小发生改变就触发监听事件resetrem
+  // resize：屏幕的大小发生改变就触发监听事件resetrem
   window.addEventListener('resize', resize());
 });
 

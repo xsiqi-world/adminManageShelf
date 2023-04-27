@@ -44,7 +44,7 @@
 <script lang="ts">
 import '/@/assets/css/common.scss';
 import { useRouter, useRoute } from 'vue-router';
-import { onMounted, reactive, ref } from 'vue';
+import { getCurrentInstance, onMounted, reactive, ref } from 'vue';
 import { ElForm, ElMessage } from 'element-plus';
 import GVerify from '/@/utils/captcha';
 import { setSession } from '/@/utils/index';
@@ -72,6 +72,8 @@ export default {
     type FormInstance = InstanceType<typeof ElForm>;
     const loginFormRef = ref<FormInstance>();
     let verifyCode: any = function () {};
+    // 获取全局数据
+    const { proxy }: any = getCurrentInstance();
 
     // 获取验证码
     const getCaptcha = () => {};
@@ -82,17 +84,30 @@ export default {
     }
 
     // 表单验证登陆
-    const doLogin = () => {
-      const valid = verifyCode.validate(loginForm.captcha);
+    const doLogin = async () => {
+      // const valid = verifyCode.validate(loginForm.captcha);
+      const valid = true;
       if (valid) {
-        setSession('AccessToken', loginForm.username);
-        router.push({
-          name: 'home',
-          path: '/home',
-          query: {
-            ...route.query,
-          },
-        })
+        const res = await proxy.$http.adminLogin({
+          username: loginForm.username,
+          password: loginForm.password,
+        });
+        if (res.code == 200) {
+          ElMessage({
+            message: '登录成功！',
+            type: 'success',
+          });
+          setSession('AccessToken', res.data.token);
+          setSession('menu', res.data.menu);
+          setSession('auth', res.data.auth);
+          router.push({
+            name: 'home',
+            path: '/home',
+            query: {
+              ...route.query,
+            },
+          })
+        }
       } else {
         return ElMessage({
           message: '验证码错误！',

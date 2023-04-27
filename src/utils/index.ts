@@ -1,13 +1,14 @@
-import type { App } from "vue";
+import type { App, Component } from "vue";
 
 // 设置session
 export function setSession(key: string, val: string) {
-  return sessionStorage.setItem(key, val);
+  return sessionStorage.setItem(key, JSON.stringify(val));
 }
 
 // 获取session
-export function getSession(key: string): string | null {
-  return sessionStorage.getItem(key);
+export function getSession(key: string): any {
+  const val = sessionStorage.getItem(key);
+  return JSON.parse(val || '');
 }
 
 // 清除session
@@ -52,7 +53,8 @@ function move(amount) {
 //   animateScroll();
 // }
 
-export const withInstall = <T>(component: T, alias?: string) => {
+// 加载组件
+export const withInstall = <T = Component>(component: T, alias?: string) => {
   const comp = component as any;
   comp.install = function(app: App) {
     app.component(comp.name, comp);
@@ -76,3 +78,35 @@ export const throttle = function(fn, delay: number = 500) {
     }, delay);
   }
 }
+
+// 函数深拷贝
+export const copyObj = (obj = {}) => {
+  // 变量先置空
+  let newObj: any = null;  
+
+  // 判断是否需要继续进行递归
+  if (typeof (obj) == 'object' && obj !== null) {
+    newObj = obj instanceof Array ? [] : {};
+    // 进行下一层递归克隆
+    for (var i in obj) {
+      newObj[i] = copyObj(obj[i]);
+    }
+    // 如果不是对象直接赋值
+  } else newObj = obj;
+  
+  return newObj;
+}
+
+// 拼接url参数
+export const joinURLParam = data => {
+  let paramsStr = '';
+  const addURLParam = (str, name, value) => {
+    str += (str.indexOf('?') == -1 ? '?' : '&');
+    str += encodeURIComponent(name) + '=' + encodeURIComponent(value);
+    return str;
+  };
+  for (let index in data) {
+    paramsStr = addURLParam(paramsStr, index, data[index]);
+  }
+  return paramsStr;
+};

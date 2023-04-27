@@ -1,6 +1,6 @@
 <template>
   <el-menu
-    :default-active="index"
+    :default-active="menuIndex"
     class="el-menu-vertical"
     @select="handleSelect"
     v-bind="$attrs"
@@ -37,7 +37,7 @@ export default defineComponent({
     const { list } = props;
     // const state = reactive(props);
     const { isCollapse } = toRefs(props);
-    const index: string | null = getSession('menuIndex');
+    const menuIndex = getSession('menuIndex');
     const route = useRoute();
 
     onMounted(() => {
@@ -48,7 +48,8 @@ export default defineComponent({
       return setSession('menuIndex', index);
     };
 
-    const menuList: menuItem[] = list || menuListData;
+    // const menuList: menuItem[] = list || menuListData;
+    const menuList = list || menuListData;
 
     const dfs = (menuList) => {
       menuList.forEach((item) => {
@@ -68,7 +69,7 @@ export default defineComponent({
     dfs(menuList);
 
     return {
-      index,
+      menuIndex,
       handleSelect,
       menuList,
       isCollapse,
