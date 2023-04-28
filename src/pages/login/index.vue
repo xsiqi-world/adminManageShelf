@@ -47,7 +47,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { getCurrentInstance, onMounted, reactive, ref } from 'vue';
 import { ElForm, ElMessage } from 'element-plus';
 import GVerify from '/@/utils/captcha';
-import { setSession } from '/@/utils/index';
+import { clearSession, setSession } from '/@/utils/index';
 
 export default {
   name: 'Login',
@@ -118,6 +118,7 @@ export default {
 
     onMounted(() => {
       verifyCode = new GVerify("v_container");
+      clearSession();
     });
 
     return {

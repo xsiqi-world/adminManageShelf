@@ -10,5 +10,8 @@ export default {
   },
   getRuleList: (data) => {
     return http.get(`${baseUrl}/api/getRuleList${joinURLParam(data)}`, data);
-  }
+  },
+  ruleAuthFindById: (data) => {
+    return http.get(`${baseUrl}/api/ruleAuthFindById${joinURLParam(data)}`, data);
+  },
 };

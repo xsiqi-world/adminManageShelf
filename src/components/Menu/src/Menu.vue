@@ -1,10 +1,10 @@
 <template>
   <el-menu
-    :default-active="menuIndex"
+    :default-active="defaultActive || menuIndex"
     class="el-menu-vertical"
     @select="handleSelect"
     v-bind="$attrs"
-    router
+    :router="isJump"
     :collapse="isCollapse"
     unique-opened
   >
@@ -29,23 +29,36 @@ export default defineComponent({
     list: {
       type: Array as PropType<menuItem[]>
     },
+    // 是否折叠
     isCollapse: {
       type: Boolean as PropType<boolean>
+    },
+    // 是否跳转
+    isJump: {
+      type: Boolean as PropType<boolean>,
+      default: () => true
+    },
+    defaultActive: {
+      type: [String, Number] as PropType<string | number>,
+      default: 0
     }
   },
-  setup(props) {
-    const { list } = props;
+  setup(props, context) {
+    const { list, defaultActive } = props;
     // const state = reactive(props);
     const { isCollapse } = toRefs(props);
     const menuIndex = getSession('menuIndex');
     const route = useRoute();
 
     onMounted(() => {
-      console.log(route.query);
+      // console.log(route.query);
     });
 
     const handleSelect = (index: string): void => {
-      return setSession('menuIndex', index);
+      context.emit('active', index.split('-').pop());
+      if (!defaultActive) {
+        return setSession('menuIndex', index);
+      }
     };
 
     // const menuList: menuItem[] = list || menuListData;

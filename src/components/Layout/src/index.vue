@@ -41,7 +41,7 @@ import { getCurrentInstance, onMounted, onUnmounted, reactive, ref } from 'vue';
 import { Menu } from '/@/components/index';
 import LayoutFooter from './components/LayoutFooter.vue';
 import LayoutUserInfo from './components/LayoutUserInfo.vue';
-import { getSession } from '/@/utils';
+import { getSession, setSession } from '/@/utils';
 
 interface menuType {
   id: number,
@@ -58,29 +58,39 @@ interface menuType {
 const { proxy }: any = getCurrentInstance();
 const title = proxy.$title;
 const isCollapse = ref(false);
-const menuList: any[] = reactive([]);
+const menuList: any[] = [];
 
 const checkCollapse = () => {
   isCollapse.value = !isCollapse.value;
 };
 
 const userMenu: never[] = getSession('menu') || [];
-menuList.push(...userMenu);
-const menuParse = (list, pid = 0) => {
-  if (list instanceof Array) {
-    list.forEach((item, key) => {
-      if (item.pid == 0) {
-        item.children = [];
-        menuList.push(item);
-        menuParse(userMenu, item.pid);
-      } else if (item.id == pid) {
-        return item;
-      }
-    })
-  }
+const menuParse = (list) => {
+  let map = {};
+  list.forEach(item => {
+    if (item.level == 1) {
+      menuList.push(item);
+    }
+    
+    if (!map[item.pid]) {
+      map[item.pid] = [];
+    }
+    map[item.pid].push(item);
+  });
+
+  list.forEach(item => {
+    if (!item.children) {
+      item.children = [];
+    }
+    if (map[item.id]) {
+      item.children.push(...map[item.id]);
+    }
+  });
+  
 }
 
-// menuParse(userMenu, 0);
+menuParse(userMenu);
+setSession('menuTree', menuList);
 console.log('menuList', menuList);
 
 const handleMenuList = [

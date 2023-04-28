@@ -13,7 +13,6 @@ export default {
   components: { Increasing },
   setup() {
     const num = ref(10);
-    console.log('role');
     provide('level', 123);
     return {
       num

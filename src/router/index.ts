@@ -2,6 +2,8 @@ import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router
 import { getSession } from '/@/utils';
 import { ElMessage } from 'element-plus';
 
+import ruleRoutes from './rule';
+
 const routes = [
   {
     path: '/',
@@ -11,7 +13,7 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('../pages/login/index'),
+    component: () => import('../pages/login/index.vue'),
   },
   // {
   //   path: '*',
@@ -20,7 +22,7 @@ const routes = [
   {
     path: '/home',
     name: 'home',
-    component: () => import('../pages/home/index'),
+    component: () => import('../pages/home/index.vue'),
     // 只有经过身份验证的用户才能创建帖子
     meta: {
       keepAlive: true
@@ -30,7 +32,7 @@ const routes = [
   {
     path: '/role',
     name: 'role',
-    component: () => import('../pages/role/index'),
+    component: () => import('../pages/role/index.vue'),
     meta: {
       keepAlive: true,
     },
@@ -38,7 +40,7 @@ const routes = [
   {
     path: '/about',
     name: 'about',
-    component: () => import('../pages/about/index'),
+    component: () => import('../pages/about/index.vue'),
     meta: {
       keepAlive: true,
     },
@@ -46,7 +48,7 @@ const routes = [
   {
     path: '/test',
     name: 'test',
-    component: () => import('../pages/about/index'),
+    component: () => import('../pages/about/index.vue'),
     meta: {
       keepAlive: true,
       requiresAuth: true,
@@ -55,12 +57,13 @@ const routes = [
   {
     path: '/formMarking',
     name: 'formMarking',
-    component: () => import('../pages/formMarking/index'),
+    component: () => import('../pages/formMarking/index.vue'),
     meta: {
       keepAlive: true,
       requiresAuth: true,
     },
   },
+  ...ruleRoutes
 ];
 
 const router = createRouter({
@@ -102,8 +105,8 @@ router.beforeEach((to, from) => {
       query: { redirect: to.fullPath },
     }
   }
-  console.log('to', to);
-  console.log('meta', to.meta);
+  // console.log('to', to);
+  // console.log('meta', to.meta);
   // return false;
 });
 

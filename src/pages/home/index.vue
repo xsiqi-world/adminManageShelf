@@ -15,7 +15,6 @@ export default {
     HelloWorld,
   },
   setup() {
-    console.log('首页');
     const pageParams = reactive({
       pageNum: 1,
       pageSize: 20,
@@ -23,8 +22,6 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const { proxy } = getCurrentInstance();
-    const res = proxy.$http.getRuleList(pageParams);
-    console.log(res);
   },
 };
 </script>

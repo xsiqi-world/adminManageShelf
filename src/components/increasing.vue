@@ -27,7 +27,8 @@ export default defineComponent({
       type: Number as PropType<number>,
     },
   },
-  setup(props, context): () => JSX.Element {
+  // setup(props, context): () => JSX.Element {
+  setup(props, context) {
     const { num } = toRefs(props);
     console.log('props', num);
 
@@ -37,7 +38,6 @@ export default defineComponent({
     // const slots = useSlots();
 
     function increasing(): void {
-      console.log(111)
       context.emit('update:num', (props.num as number) + 1);
     }
 

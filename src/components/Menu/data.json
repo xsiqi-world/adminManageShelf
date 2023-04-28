@@ -1,21 +1,21 @@
 [
   {
     "id": 1,
-    "name": "菜单1",
+    "title": "菜单1",
     "children": [
       {
         "id": 3,
-        "name": "菜单1-1",
+        "title": "菜单1-1",
         "children": [
           {
             "id": 5,
-            "name": "菜单1-1-1",
-            "path": "/role"
+            "title": "菜单1-1-1",
+            "url": "/role"
           },
           {
             "id": 6,
-            "name": "菜单1-1-2",
-            "path": "/test"
+            "title": "菜单1-1-2",
+            "url": "/test"
           }
         ]
       }
@@ -23,17 +23,17 @@
   },
   {
     "id": 2,
-    "name": "菜单2",
+    "title": "菜单2",
     "children": [
       {
         "id": 4,
-        "name": "菜单2-1",
-        "path": "/about"
+        "title": "菜单2-1",
+        "url": "/about"
       },
       {
         "id": 5,
-        "name": "表单",
-        "path": "/formMarking"
+        "title": "表单",
+        "url": "/formMarking"
       }
     ]
   }

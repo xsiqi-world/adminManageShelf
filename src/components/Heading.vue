@@ -10,11 +10,11 @@ export default {
     }
   },
   setup(props, { slots }): () => JSX.Element {
-    console.log('level', props)
     const level = inject('level');
     const Tag = "h" + level;
 
-    console.log('heading', level)
+    // console.log('level', props);
+    // console.log('heading', level);
     return () => <Tag>{slots}</Tag>
   },
 };

@@ -1,18 +1,18 @@
 import type { App, Component } from "vue";
 
 // 设置session
-export function setSession(key: string, val: string) {
+export function setSession(key: string, val: any) {
   return sessionStorage.setItem(key, JSON.stringify(val));
 }
 
 // 获取session
 export function getSession(key: string): any {
   const val = sessionStorage.getItem(key);
-  return JSON.parse(val || '');
+  return JSON.parse(val || '0');
 }
 
 // 清除session
-export function sessionClear(): void {
+export function clearSession(): void {
   return sessionStorage.clear();
 }
 
@@ -68,7 +68,7 @@ export const withInstall = <T = Component>(component: T, alias?: string) => {
 
 
 // 节流函数
-export const throttle = function(fn, delay: number = 500) {
+export const throttle = function(fn: Function, delay: number = 500) {
   let timer: any = null;
   return function() {
     if (timer) return;

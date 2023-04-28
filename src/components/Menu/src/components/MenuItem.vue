@@ -6,7 +6,7 @@
   >
     <template #title>
       <el-icon :size="20"><location /></el-icon>
-      <span>{{ item.name }}</span>
+      <span>{{ item.title }}</span>
     </template>
 
     <!-- 递归组件 -->
@@ -17,7 +17,7 @@
     v-bind:key="key"
     :index="item.index"
     :route="{
-      path: item.path,
+      path: '/' + item.url,
     }"
   >
     <el-icon><setting /></el-icon>
@@ -33,7 +33,7 @@ export default defineComponent({
   name: 'MenuItem',
   props: {
     menuList: {
-      type: Array as PropType<menuItem[]>,
+      type: Array as PropType<any[]>,
       default: [],
     },
   },
