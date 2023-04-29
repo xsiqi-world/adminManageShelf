@@ -1,5 +1,5 @@
 <template>
-  <div>个人信息</div>
+  <div class="user-info">个人信息</div>
 </template>
 
 <script>

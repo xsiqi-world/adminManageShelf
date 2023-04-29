@@ -1,5 +1,5 @@
 <template>
-  <div>footer</div>
+  <div class="footer">footer</div>
 </template>
 
 <script>
@@ -12,4 +12,8 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.footer {
+  padding: 20px;
+}
+</style>

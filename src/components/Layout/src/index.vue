@@ -26,7 +26,9 @@
 
       <div class="main-container">
         <div class="main">
-          <slot></slot>
+          <div class="content">
+            <slot></slot>
+          </div>
         </div>
         <div class="footer">
           <LayoutFooter></LayoutFooter>
@@ -68,7 +70,7 @@ const userMenu: never[] = getSession('menu') || [];
 const menuParse = (list) => {
   let map = {};
   list.forEach(item => {
-    if (item.level == 1) {
+    if (item.pid == 0) {
       menuList.push(item);
     }
     
@@ -205,7 +207,12 @@ onUnmounted(() => {
       .main {
         height: 95%;
         background: #f4f6fa;
-        padding: 10px;
+        padding: 20px;
+        .content {
+          height: 100%;
+          background-color: #fff;
+          padding: 20px;
+        }
       }
       .footer {
         height: 5%;

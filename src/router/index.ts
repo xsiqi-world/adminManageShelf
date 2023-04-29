@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router
 import { getSession } from '/@/utils';
 import { ElMessage } from 'element-plus';
 
-import ruleRoutes from './rule';
+import systemRoutes from './system';
 
 const routes = [
   {
@@ -63,7 +63,15 @@ const routes = [
       requiresAuth: true,
     },
   },
-  ...ruleRoutes
+  {
+    path: '/authAllot',
+    name: 'authAllot',
+    component: () => import('../pages/role/authAllot.vue'),
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  ...systemRoutes
 ];
 
 const router = createRouter({
