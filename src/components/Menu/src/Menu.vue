@@ -54,8 +54,8 @@ export default defineComponent({
       // console.log(route.query);
     });
 
-    const handleSelect = (index: string): void => {
-      context.emit('active', index.split('-').pop());
+    const handleSelect = (index: string | number): void => {
+      context.emit('active', String(index).split('-').pop());
       if (!defaultActive) {
         return setSession('menuIndex', index);
       }

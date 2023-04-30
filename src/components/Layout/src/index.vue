@@ -44,6 +44,7 @@ import { Menu } from '/@/components/index';
 import LayoutFooter from './components/LayoutFooter.vue';
 import LayoutUserInfo from './components/LayoutUserInfo.vue';
 import { getSession, setSession } from '/@/utils';
+import { menuParse } from '/@/utils/menu';
 
 interface menuType {
   id: number,
@@ -67,31 +68,34 @@ const checkCollapse = () => {
 };
 
 const userMenu: never[] = getSession('menu') || [];
-const menuParse = (list) => {
-  let map = {};
-  list.forEach(item => {
-    if (item.pid == 0) {
-      menuList.push(item);
-    }
+// const menuParse = (list) => {
+//   let map = {};
+//   list.forEach(item => {
+//     if (item.pid == 0) {
+//       menuList.push(item);
+//     }
     
-    if (!map[item.pid]) {
-      map[item.pid] = [];
-    }
-    map[item.pid].push(item);
-  });
+//     if (!map[item.pid]) {
+//       map[item.pid] = [];
+//     }
+//     map[item.pid].push(item);
+//   });
 
-  list.forEach(item => {
-    if (!item.children) {
-      item.children = [];
-    }
-    if (map[item.id]) {
-      item.children.push(...map[item.id]);
-    }
-  });
+//   list.forEach(item => {
+//     if (!item.children) {
+//       item.children = [];
+//     }
+//     if (map[item.id]) {
+//       item.children.push(...map[item.id]);
+//     }
+//   });
   
-}
+// }
 
-menuParse(userMenu);
+// menuParse(userMenu);
+
+menuList.length = 0;
+menuList.push(...menuParse(userMenu));
 setSession('menuTree', menuList);
 console.log('menuList', menuList);
 

@@ -28,5 +28,17 @@ export default {
   // 角色列表
   getGroupList: (data) => {
     return http.get(`${baseUrl}/api/getGroupList${joinURLParam(data)}`, data);
+  },
+  // 更新角色
+  updateGroup: (data) => {
+    return http.post(`${baseUrl}/api/saveGroupRule`, data);
+  },
+  // 更新角色
+  getGroupRuleList: (data) => {
+    return http.get(`${baseUrl}/api/getGroupRuleList` + joinURLParam(data));
+  },
+  // 删除权限
+  deleteRule: (data) => {
+    return http.get(`${baseUrl}/api/deleteRule` + joinURLParam(data));
   }
 };

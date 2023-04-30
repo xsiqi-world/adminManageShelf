@@ -23,10 +23,13 @@
       <el-table class="table-box menu-table" :data="menuData" stripe style="width: 100%">
         <el-table-column prop="title" label="菜单名" width="150" />
         <el-table-column prop="url" label="跳转链接" width="600" />
-        <el-table-column fixed="right" label="操作" width="120">
+        <el-table-column fixed="right" label="操作" width="150">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="editMenu(scope.row)">
+            <el-button text type="primary" size="small" @click="editMenu(scope.row)">
               编辑
+            </el-button>
+            <el-button text type="primary" size="small" @click="delAuth(scope.row)">
+              删除
             </el-button>
           </template>
         </el-table-column>
@@ -39,10 +42,13 @@
       <el-table class="table-box auth-table" :data="authData" stripe style="width: 100%">
         <el-table-column prop="title" label="权限名" width="150" />
         <el-table-column prop="name" label="权限标识" width="600" />
-        <el-table-column fixed="right" label="操作" width="120">
+        <el-table-column fixed="right" label="操作" width="150">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="editAuth(scope.row)">
+            <el-button text type="primary" size="small" @click="editAuth(scope.row)">
               编辑
+            </el-button>
+            <el-button text type="primary" size="small" @click="delAuth(scope.row)">
+              删除
             </el-button>
           </template>
         </el-table-column>
@@ -97,12 +103,13 @@
 <script lang="ts">
 import { getCurrentInstance, reactive, ref, unref } from 'vue';
 import { getSession } from '/@/utils';
-import { ElMessage, FormInstance, FormRules } from 'element-plus';
+import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus';
+import { menuParse } from '/@/utils/menu';
 
 export default {
   setup() {
     const { proxy }: any = getCurrentInstance();
-    const menuList = reactive([]);
+    const menuList: any[] = reactive([]);
     const activeId = ref<string>(); // 选中菜单
     const menuData: any[] = reactive([]); // 菜单列表
     const authData: any[] = reactive([]); // 权限列表
@@ -133,8 +140,24 @@ export default {
 
     const dialogVisible = ref(false);
 
-    menuList.push(...(getSession('menuTree') as never[]));
+    // menuList.push(...(getSession('menuTree') as never[]));
     // console.log('menuList', menuList);
+
+    const init = () => {
+      getRuleList();
+    }
+
+    // NOTE:菜单列表
+    const getRuleList = async () => {
+      const res = await proxy.$http.getRuleList({
+        pageNum: 1,
+        pageSize: 999,
+      });
+      if (res.code == 200) {
+        menuList.length = 0;
+        menuList.push(...menuParse(res.data.datas));
+      }
+    }
 
     // 获取菜单下的权限
     const getTableList = async id => {
@@ -222,6 +245,7 @@ export default {
           type: 'success',
         });
         dialogVisible.value = false;
+        getRuleList();
         unref(activeId) && getTableList(unref(activeId));
       }
     };
@@ -234,6 +258,34 @@ export default {
       console.log(val);
       formData.pid = val ? val[val.length - 1] : 0;
     }
+
+    // 删除权限菜单
+    const delAuth = async (rows) => {
+      const id = rows.id;
+      ElMessageBox.confirm(
+        '确定是否删除?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      )
+        .then(async () => {
+          const res = await proxy.$http.deleteRule({id});
+
+          if (res.code == 200) {
+            ElMessage({
+              message: '操作成功！',
+              type: 'success',
+            });
+            unref(activeId) && getTableList(unref(activeId));
+          }
+        });
+      
+    };
+
+    init();
 
     return {
       menuList,
@@ -255,7 +307,8 @@ export default {
       isEdit,
       activeId,
       menuGroup,
-      cascaderChange
+      cascaderChange,
+      delAuth
     };
   },
 };

@@ -11,7 +11,7 @@
       </div>
       <el-table class="table-box" :data="tableData" stripe style="width: 100%">
         <el-table-column prop="title" label="角色名" />
-        <el-table-column prop="name" label="备注" />
+        <el-table-column prop="remark" label="备注" />
         <el-table-column fixed="right" label="操作">
           <template #default="scope">
             <el-button link type="primary" size="small" @click="editAuth(scope.row)">
@@ -46,7 +46,64 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="dialogVisible = false">关闭</el-button>
-          <el-button type="primary" @click="submitRole">提交</el-button>
+          <el-button type="primary" @click="submitRole(1)">提交</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <el-dialog v-model="authVisible" title="Tips" width="30%">
+      <!-- <div class="custom-tree-node-container">
+        <el-tree
+          v-if="authVisible"
+          :data="menuList"
+          show-checkbox
+          node-key="id"
+          default-expand-all
+          :expand-on-click-node="false"
+          :props="treeProps"
+          :default-checked-keys="defaultCheckedKeys"
+          ref="treeRef"
+        />
+      </div> -->
+
+      <div class="tree-box">
+        <!-- <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M384 192v640l384-320.064z"></path></svg> -->
+        <div class="tree-node">
+          <div class="tree-content" @click="openHandler(1)">
+            <!-- <el-icon><CaretRight /></el-icon> -->
+            <!-- <span>test-level1</span> -->
+            <div class="checkbox">
+              <span>test-level1</span>
+            </div>
+          </div>
+          <div class="tree-children">
+            <div class="tree-node">
+              <div style="padding-left: 18px" class="tree-content">
+                <!-- <el-icon><CaretRight /></el-icon> -->
+                <!-- <span>test-level1-1</span> -->
+                <div class="checkbox">
+                  <span>test-level1-1</span>
+                </div>
+              </div>
+              <div class="tree-children"></div>
+            </div>
+            <div class="tree-node">
+              <div style="padding-left: 18px" class="tree-content">
+                <div class="checkbox">
+                  <span>test-level1-1</span>
+                </div>
+              </div>
+              <div class="tree-children"></div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="authVisible = false">关闭</el-button>
+          <el-button type="primary" @click="submitRole(2)">提交</el-button>
         </span>
       </template>
     </el-dialog>
@@ -59,6 +116,9 @@ import Increasing from '../../components/Increasing.vue';
 import { Pagination } from '/@/components/Pagination/index';
 import { FormInstance, FormRules, ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
+import type Node from 'element-plus/es/components/tree/src/model/node'
+import { getSession } from '/@/utils';
+import { menuParse } from '/@/utils/menu';
 
 export default {
   name: 'role',
@@ -70,6 +130,7 @@ export default {
     const tableData: any[] = reactive([]);
     const total = ref(0);
     const dialogVisible = ref(false);
+    const authVisible = ref(false);
     const queryParams = reactive({
       pageNum: 1,
       pageSize: 20,
@@ -80,14 +141,50 @@ export default {
       title: { required: true, message: '请输入', trigger: 'blur' },
       url: { required: true, message: '请输入', trigger: 'blur' },
     });
+    const defaultCheckedKeys: any[] = reactive([]);
+    const treeRef = ref();
 
-    const router = useRouter();
-
-    const init = () => {
-      getTableData();
+    interface Tree {
+      id: number
+      label: string
+      isPenultimate?: boolean
+      children?: Tree[]
     };
 
-    // 获取列表数据
+    const customNodeClass = (data: Tree, node: Node) => {
+      if (data.isPenultimate) {
+        return 'is-penultimate'
+      }
+      return null
+    };
+
+    const router = useRouter();
+    // const menuList = getSession('menuTree');
+    const menuList: any[] = reactive([]);
+    const treeProps = {
+      class: customNodeClass,
+      label: 'title',
+      value: 'id'
+    };
+
+    const init = () => {
+      getTableData(); // 角色列表
+      getRuleList(); // 菜单列表
+    };
+
+    // NOTE:菜单列表
+    const getRuleList = async () => {
+      const res = await proxy.$http.getRuleList({
+        pageNum: 1,
+        pageSize: 999,
+      });
+      if (res.code == 200) {
+        menuList.length = 0;
+        menuList.push(...menuParse(res.data.datas));
+      }
+    }
+
+    // NOTE:获取角色列表数据
     const getTableData = async () => {
       const res = await proxy.$http.getGroupList(queryParams);
       if (res.code == 200) {
@@ -98,14 +195,34 @@ export default {
       }
     };
 
-    const editAuth = () => {
-      dialogVisible.value = true;
+    // NOTE:获取角色的权限
+    const getGroupRuleList = async (id: number) => {
+      const res = await proxy.$http.getGroupRuleList({id});
+      if (res.code == 200) {
+        defaultCheckedKeys.length = 0;
+        res.data.datas.forEach(item => {
+          if (item.pid != 0) {
+            defaultCheckedKeys.push(item.id);
+          }
+        });
+      }
+    }
+
+    const editAuth = async (rows: any) => {
+      console.log(rows);
+      // defaultCheckedKeys.length = 0;
+      // defaultCheckedKeys.push(...rows.rules.split(","));
+      await getGroupRuleList(rows.id);
+
+      Object.assign(formData, rows);
+      authVisible.value = true;
       // router.push({
       //   path: '/authAllot'
       // });
     };
 
-    const editInfo = () => {
+    const editInfo = (rows) => {
+      Object.assign(formData, rows);
       dialogVisible.value = true;
     };
 
@@ -113,8 +230,13 @@ export default {
       dialogVisible.value = false;
     };
 
-    const submitRole = async () => {
-      const res = await proxy.$http.updateRule(formData);
+    const submitRole = async (type: number) => {
+      if (type != 1) {
+        const rules = treeRef.value.getCheckedNodes(false, true);
+        formData.rules = rules.map(item => item.id).join(',');
+      }
+      
+      const res = await proxy.$http.updateGroup(formData);
       
       if (res.code == 200) {
         ruleFormRef.value?.resetFields();
@@ -122,9 +244,13 @@ export default {
           message: '操作成功！',
           type: 'success',
         });
-        dialogVisible.value = false;
+        authVisible.value = false;
         getTableData();
       }
+    };
+
+    const openHandler = () => {
+
     }
 
     init();
@@ -142,7 +268,13 @@ export default {
       getTableData,
       ruleFormRef,
       rules,
-      submitRole
+      submitRole,
+      authVisible,
+      treeProps,
+      menuList,
+      defaultCheckedKeys,
+      treeRef,
+      openHandler
     };
   },
 };
@@ -156,5 +288,66 @@ export default {
       padding: 10px;
     }
   }
+}
+
+.checkbox {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  // width: 81px;
+  height: 32px;
+  line-height: 1;
+  padding: 6px 18px;
+  // height: 93px;
+  // line-height: 93px;
+  // margin: 0 auto;
+  padding: 6px 18px;
+  text-align: center;
+  color: #4abe84;
+  background-color: #fff;
+  box-shadow: 0px 2px 7px 0px rgba(85, 110, 97, 0.35);
+  border-radius: 7px;
+  border: 1px solid rgba(74, 190, 132, 1);
+  cursor: pointer;
+}
+.checkbox > span {
+  display: inline-flex;
+  align-items: center;
+}
+.checkbox:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: 10px solid #4abe84;
+  border-left-color: transparent;
+  border-bottom-color: transparent;
+}
+.checkbox:after {
+  content: "";
+  position: absolute;
+  width: 3px;
+  height: 7px;
+  right: 1px;
+  top: -2px;
+  border: 2px solid #fff;
+  border-top-color: transparent;
+  border-left-color: transparent;
+  transform: rotate(45deg);
+}
+</style>
+
+<style>
+.is-penultimate > .el-tree-node__content {
+  color: #626aef;
+}
+
+.el-tree-node.is-expanded.is-penultimate > .el-tree-node__children {
+  display: flex;
+  flex-direction: row;
+}
+.is-penultimate > .el-tree-node__children > div {
+  width: 25%;
 }
 </style>

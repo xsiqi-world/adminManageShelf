@@ -1,7 +1,7 @@
 const routes = [
   // 权限列表
   {
-    path: '/home/rule/list',
+    path: '/system/rule',
     name: 'rule',
     component: () => import('../pages/rule/index.vue'),
     meta: {
@@ -9,7 +9,7 @@ const routes = [
     },
   },
   {
-    path: '/home/menu/list',
+    path: '/system/menu',
     name: 'menu',
     component: () => import('../pages/menu/index.vue'),
     meta: {
@@ -18,7 +18,7 @@ const routes = [
   },
   // 角色列表
   {
-    path: '/home/role',
+    path: '/system/role',
     name: 'role',
     component: () => import('../pages/role/index.vue'),
     meta: {

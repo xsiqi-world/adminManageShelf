@@ -1,8 +1,8 @@
 <template>
   <el-sub-menu 
     v-for="(item, key) in parentList" 
-    v-bind:key="key" 
-    :index="item.index"
+    v-bind:key="item.id" 
+    :index="item.id"
   >
     <template #title>
       <el-icon :size="20"><location /></el-icon>
@@ -14,8 +14,8 @@
   </el-sub-menu>
   <el-menu-item
     v-for="(item, key) in childList"
-    v-bind:key="key"
-    :index="item.index"
+    v-bind:key="item.id"
+    :index="item.id"
     :route="{
       path: '/' + item.url,
     }"

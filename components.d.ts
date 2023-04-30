@@ -27,6 +27,7 @@ declare module 'vue' {
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
+    ElTree: typeof import('element-plus/es')['ElTree']
     FormComp: typeof import('./src/components/FormMarking/src/components/FormComp.vue')['default']
     FormMarkingItem: typeof import('./src/components/FormMarking/src/components/FormMarkingItem.vue')['default']
     FormMenu: typeof import('./src/components/FormMarking/src/components/FormMenu.vue')['default']
