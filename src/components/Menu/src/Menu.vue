@@ -1,6 +1,6 @@
 <template>
   <el-menu
-    :default-active="defaultActive || menuIndex"
+    :default-active="String(defaultActive || menuIndex)"
     class="el-menu-vertical"
     @select="handleSelect"
     v-bind="$attrs"

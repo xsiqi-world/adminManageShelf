@@ -64,9 +64,9 @@ const routes = [
     },
   },
   {
-    path: '/authAllot',
-    name: 'authAllot',
-    component: () => import('../pages/role/authAllot.vue'),
+    path: '/auth',
+    name: 'auth',
+    component: () => import('../pages/role/auth.vue'),
     meta: {
       requiresAuth: true,
     },

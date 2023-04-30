@@ -66,39 +66,7 @@
         />
       </div> -->
 
-      <div class="tree-box">
-        <!-- <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M384 192v640l384-320.064z"></path></svg> -->
-        <div class="tree-node">
-          <div class="tree-content" @click="openHandler(1)">
-            <!-- <el-icon><CaretRight /></el-icon> -->
-            <!-- <span>test-level1</span> -->
-            <div class="checkbox">
-              <span>test-level1</span>
-            </div>
-          </div>
-          <div class="tree-children">
-            <div class="tree-node">
-              <div style="padding-left: 18px" class="tree-content">
-                <!-- <el-icon><CaretRight /></el-icon> -->
-                <!-- <span>test-level1-1</span> -->
-                <div class="checkbox">
-                  <span>test-level1-1</span>
-                </div>
-              </div>
-              <div class="tree-children"></div>
-            </div>
-            <div class="tree-node">
-              <div style="padding-left: 18px" class="tree-content">
-                <div class="checkbox">
-                  <span>test-level1-1</span>
-                </div>
-              </div>
-              <div class="tree-children"></div>
-            </div>
-            
-          </div>
-        </div>
-      </div>
+      <Auth v-if="authVisible" :menuList="menuList" v-model:checkedKeys="checkedKeys"></Auth>
 
       <template #footer>
         <span class="dialog-footer">
@@ -119,10 +87,11 @@ import { useRouter } from 'vue-router';
 import type Node from 'element-plus/es/components/tree/src/model/node'
 import { getSession } from '/@/utils';
 import { menuParse } from '/@/utils/menu';
+import Auth from './auth.vue';
 
 export default {
   name: 'role',
-  components: { Increasing, Pagination },
+  components: { Increasing, Pagination, Auth },
   setup() {
     const { proxy, ctx }: any = getCurrentInstance();
     const num = ref(10);
@@ -143,6 +112,7 @@ export default {
     });
     const defaultCheckedKeys: any[] = reactive([]);
     const treeRef = ref();
+    const checkedKeys: any = reactive([]);
 
     interface Tree {
       id: number
@@ -159,7 +129,6 @@ export default {
     };
 
     const router = useRouter();
-    // const menuList = getSession('menuTree');
     const menuList: any[] = reactive([]);
     const treeProps = {
       class: customNodeClass,
@@ -201,18 +170,21 @@ export default {
       if (res.code == 200) {
         defaultCheckedKeys.length = 0;
         res.data.datas.forEach(item => {
-          if (item.pid != 0) {
+          // if (item.pid != 0) {
             defaultCheckedKeys.push(item.id);
-          }
+          // }
         });
       }
     }
 
     const editAuth = async (rows: any) => {
-      console.log(rows);
       // defaultCheckedKeys.length = 0;
       // defaultCheckedKeys.push(...rows.rules.split(","));
-      await getGroupRuleList(rows.id);
+      // await getGroupRuleList(rows.id);
+
+      checkedKeys.length = 0;
+      checkedKeys.push(...rows.rules.split(","));
+      console.log(checkedKeys);
 
       Object.assign(formData, rows);
       authVisible.value = true;
@@ -231,9 +203,13 @@ export default {
     };
 
     const submitRole = async (type: number) => {
+      // if (type != 1) {
+      //   const rules = treeRef.value.getCheckedNodes(false, true);
+      //   formData.rules = rules.map(item => item.id).join(',');
+      // }
+
       if (type != 1) {
-        const rules = treeRef.value.getCheckedNodes(false, true);
-        formData.rules = rules.map(item => item.id).join(',');
+        formData.rules = checkedKeys.join(',');
       }
       
       const res = await proxy.$http.updateGroup(formData);
@@ -249,9 +225,7 @@ export default {
       }
     };
 
-    const openHandler = () => {
-
-    }
+    provide('checkedKeys', checkedKeys);
 
     init();
 
@@ -274,7 +248,7 @@ export default {
       menuList,
       defaultCheckedKeys,
       treeRef,
-      openHandler
+      checkedKeys
     };
   },
 };
@@ -287,55 +261,13 @@ export default {
     .breadcrumb {
       padding: 10px;
     }
+
+    .checkbox {
+      margin: 10px;
+    }
   }
 }
 
-.checkbox {
-  position: relative;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  // width: 81px;
-  height: 32px;
-  line-height: 1;
-  padding: 6px 18px;
-  // height: 93px;
-  // line-height: 93px;
-  // margin: 0 auto;
-  padding: 6px 18px;
-  text-align: center;
-  color: #4abe84;
-  background-color: #fff;
-  box-shadow: 0px 2px 7px 0px rgba(85, 110, 97, 0.35);
-  border-radius: 7px;
-  border: 1px solid rgba(74, 190, 132, 1);
-  cursor: pointer;
-}
-.checkbox > span {
-  display: inline-flex;
-  align-items: center;
-}
-.checkbox:before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  border: 10px solid #4abe84;
-  border-left-color: transparent;
-  border-bottom-color: transparent;
-}
-.checkbox:after {
-  content: "";
-  position: absolute;
-  width: 3px;
-  height: 7px;
-  right: 1px;
-  top: -2px;
-  border: 2px solid #fff;
-  border-top-color: transparent;
-  border-left-color: transparent;
-  transform: rotate(45deg);
-}
 </style>
 
 <style>

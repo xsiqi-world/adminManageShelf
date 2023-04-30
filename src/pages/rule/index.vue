@@ -116,8 +116,8 @@ export default {
     const formData: any = reactive({});
     const ruleFormRef = ref<FormInstance>();
     const rules = reactive<FormRules>({
-      title: { required: true, message: '请输入', trigger: 'blur' },
-      url: { required: true, message: '请输入', trigger: 'blur' },
+      title: [{ required: true, message: '请输入', trigger: 'blur' }],
+      // url: [{ required: true, message: '请输入', trigger: 'blur' }],
     });
     const menuGroup = reactive([]);
 
