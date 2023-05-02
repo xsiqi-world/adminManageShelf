@@ -1,7 +1,7 @@
 <template>
   <div class="tree-box">
     <!-- <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M384 192v640l384-320.064z"></path></svg> -->
-    <div class="tree-node" v-for="item in menuList">
+    <div class="tree-node" v-for="item in menuList" :key="item.id">
       <div class="tree-content">
         <!-- <el-icon><CaretRight /></el-icon> -->
         <!-- <span>test-level1</span> -->
@@ -50,6 +50,7 @@ export default defineComponent({
     };
 
     provide('checkedChange', checkedChange);
+    provide('checkedKeys', checkedKeys);
 
     return {
       checkedChange,
@@ -67,7 +68,6 @@ export default defineComponent({
     display: flex;
     align-items: center;
     margin: 10px 0;
-    // cursor: pointer;
     .tree-children {
       display: flex;
     }
@@ -96,6 +96,7 @@ export default defineComponent({
   border: 1px solid #dcdfe6;
   cursor: pointer;
   transition: all 0.3s linear;
+  overflow: hidden;
 }
 .checkbox > span {
   display: inline-flex;

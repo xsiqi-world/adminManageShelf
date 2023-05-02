@@ -9,17 +9,23 @@
           <el-breadcrumb-item>角色管理</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
+
+      <div class="operation">
+        <el-button type="primary" @click="addRole" v-auth="'role:add'">添加角色</el-button>
+      </div>
+
       <el-table class="table-box" :data="tableData" stripe style="width: 100%">
         <el-table-column prop="title" label="角色名" />
         <el-table-column prop="remark" label="备注" />
         <el-table-column fixed="right" label="操作">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="editAuth(scope.row)">
+            <el-button link type="primary" size="small" @click="editAuth(scope.row)" v-auth="'role:rule:edit'">
               权限分配
             </el-button>
-            <el-button link type="primary" size="small" @click="editInfo(scope.row)">
+            <el-button link type="primary" size="small" @click="editInfo(scope.row)" v-auth="'role:edit'">
               编辑信息
             </el-button>
+            <el-button link type="primary" size="small" @click="delInfo(scope.row)" v-auth="'role:del'">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -34,7 +40,7 @@
       ></Pagination>
     </div>
 
-    <el-dialog v-model="dialogVisible" title="Tips" width="30%" :before-close="handleClose">
+    <el-dialog v-model="dialogVisible" title="权限编辑" width="30%" :before-close="handleClose">
       <el-form ref="ruleFormRef" :model="formData" labelWidth="100px">
         <el-form-item label="角色名" labelWidth="">
           <el-input v-model="formData.title" />
@@ -51,7 +57,7 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="authVisible" title="Tips" width="30%">
+    <el-dialog v-model="authVisible" title="权限编辑" width="30%">
       <!-- <div class="custom-tree-node-container">
         <el-tree
           v-if="authVisible"
@@ -79,15 +85,16 @@
 </template>
 
 <script lang="ts">
-import { ref, provide, reactive, getCurrentInstance } from 'vue';
+import { ref, provide, reactive, getCurrentInstance, unref } from 'vue';
 import Increasing from '../../components/Increasing.vue';
 import { Pagination } from '/@/components/Pagination/index';
-import { FormInstance, FormRules, ElMessage } from 'element-plus';
-import { useRouter } from 'vue-router';
-import type Node from 'element-plus/es/components/tree/src/model/node'
+import { FormInstance, FormRules, ElMessage, ElMessageBox } from 'element-plus';
+import type Node from 'element-plus/es/components/tree/src/model/node';
 import { getSession } from '/@/utils';
 import { menuParse } from '/@/utils/menu';
 import Auth from './auth.vue';
+import { useTableList } from '/@/hooks/useTable';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'role',
@@ -98,42 +105,43 @@ export default {
     provide('level', 123);
     const tableData: any[] = reactive([]);
     const total = ref(0);
-    const dialogVisible = ref(false);
     const authVisible = ref(false);
     const queryParams = reactive({
       pageNum: 1,
       pageSize: 20,
     });
+    const dialogVisible = ref(false);
     const formData: any = reactive({});
     const ruleFormRef = ref<FormInstance>();
     const rules = reactive<FormRules>({
-      title: { required: true, message: '请输入', trigger: 'blur' },
-      url: { required: true, message: '请输入', trigger: 'blur' },
+      title: [{ required: true, message: '请输入', trigger: 'blur' }],
+      // url: { required: true, message: '请输入', trigger: 'blur' },
     });
     const defaultCheckedKeys: any[] = reactive([]);
     const treeRef = ref();
     const checkedKeys: any = reactive([]);
 
+    const router = useRouter();
+
     interface Tree {
-      id: number
-      label: string
-      isPenultimate?: boolean
-      children?: Tree[]
-    };
+      id: number;
+      label: string;
+      isPenultimate?: boolean;
+      children?: Tree[];
+    }
 
     const customNodeClass = (data: Tree, node: Node) => {
       if (data.isPenultimate) {
-        return 'is-penultimate'
+        return 'is-penultimate';
       }
-      return null
+      return null;
     };
 
-    const router = useRouter();
     const menuList: any[] = reactive([]);
     const treeProps = {
       class: customNodeClass,
       label: 'title',
-      value: 'id'
+      value: 'id',
     };
 
     const init = () => {
@@ -149,33 +157,31 @@ export default {
       });
       if (res.code == 200) {
         menuList.length = 0;
-        menuList.push(...menuParse(res.data.datas));
+        menuList.push(...menuParse(res.data.datas, true));
       }
-    }
+    };
 
     // NOTE:获取角色列表数据
     const getTableData = async () => {
-      const res = await proxy.$http.getGroupList(queryParams);
-      if (res.code == 200) {
+      useTableList(proxy.$http.getGroupList, queryParams, res => {
         tableData.length = 0;
-        tableData.push(...(res.data.datas || []));
-        total.value = res.data.total;
-        ctx.$forceUpdate();
-      }
+        tableData.push(...res.tableData);
+        total.value = unref(res.total);
+      });
     };
 
     // NOTE:获取角色的权限
     const getGroupRuleList = async (id: number) => {
-      const res = await proxy.$http.getGroupRuleList({id});
+      const res = await proxy.$http.getGroupRuleList({ id });
       if (res.code == 200) {
         defaultCheckedKeys.length = 0;
         res.data.datas.forEach(item => {
           // if (item.pid != 0) {
-            defaultCheckedKeys.push(item.id);
+          defaultCheckedKeys.push(item.id);
           // }
         });
       }
-    }
+    };
 
     const editAuth = async (rows: any) => {
       // defaultCheckedKeys.length = 0;
@@ -183,17 +189,14 @@ export default {
       // await getGroupRuleList(rows.id);
 
       checkedKeys.length = 0;
-      checkedKeys.push(...rows.rules.split(","));
-      console.log(checkedKeys);
+      checkedKeys.push(...rows.rules.split(','));
 
       Object.assign(formData, rows);
       authVisible.value = true;
-      // router.push({
-      //   path: '/authAllot'
-      // });
     };
 
-    const editInfo = (rows) => {
+    // 编辑角色
+    const editInfo = rows => {
       Object.assign(formData, rows);
       dialogVisible.value = true;
     };
@@ -211,9 +214,9 @@ export default {
       if (type != 1) {
         formData.rules = checkedKeys.join(',');
       }
-      
+
       const res = await proxy.$http.updateGroup(formData);
-      
+
       if (res.code == 200) {
         ruleFormRef.value?.resetFields();
         ElMessage({
@@ -221,11 +224,41 @@ export default {
           type: 'success',
         });
         authVisible.value = false;
+        dialogVisible.value = false;
         getTableData();
       }
     };
 
-    provide('checkedKeys', checkedKeys);
+    // 添加角色
+    const addRole = () => {
+      router.push({
+        path: '/system/role/add',
+      });
+    };
+
+    // 删除权限菜单
+    const delInfo = async rows => {
+      const id = rows.id;
+      ElMessageBox.confirm('确定是否删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
+        .then(async () => {
+          const res = await proxy.$http.deleteGroup({ id });
+
+          if (res.code == 200) {
+            ElMessage({
+              message: '操作成功！',
+              type: 'success',
+            });
+            getTableData();
+          }
+        })
+        .catch(() => {});
+    };
+
+    // provide('checkedKeys', checkedKeys);
 
     init();
 
@@ -248,7 +281,9 @@ export default {
       menuList,
       defaultCheckedKeys,
       treeRef,
-      checkedKeys
+      checkedKeys,
+      addRole,
+      delInfo,
     };
   },
 };
@@ -258,8 +293,8 @@ export default {
 .role-container {
   .content {
     background-color: #fff;
-    .breadcrumb {
-      padding: 10px;
+    .operation {
+      margin: 10px 0;
     }
 
     .checkbox {
@@ -267,7 +302,6 @@ export default {
     }
   }
 }
-
 </style>
 
 <style>

@@ -8,11 +8,15 @@ import { renderLoading } from './utils/render';
 import api from './api/index';
 
 import App from './App.vue';
+import { getSession } from './utils';
+import directives from './plugins/directive';
 
 const app = createApp(App);
 app.config.globalProperties.$title = '后台管理系统';
 app.config.globalProperties.$renderLoading = renderLoading;
 app.config.globalProperties.$http = api;
+
+app.use(directives);
 
 for (const name in ElIcons) {
 	app.component(name, (ElIcons as any)[name]);

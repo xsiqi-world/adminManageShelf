@@ -1,6 +1,6 @@
 <template>
   <div class="operation">
-    <el-button type="primary" @click="addAuth(1)">添加菜单</el-button>
+    <el-button type="primary" @click="addAuth(1)" v-auth="'rule:add'">添加菜单</el-button>
   </div>
   <div class="rule-container">
     <Menu
@@ -25,31 +25,27 @@
         <el-table-column prop="url" label="跳转链接" width="600" />
         <el-table-column fixed="right" label="操作" width="150">
           <template #default="scope">
-            <el-button text type="primary" size="small" @click="editMenu(scope.row)">
+            <el-button text type="primary" size="small" @click="editMenu(scope.row)" v-auth="'rule:edit'">
               编辑
             </el-button>
-            <el-button text type="primary" size="small" @click="delAuth(scope.row)">
-              删除
-            </el-button>
+            <el-button text type="primary" size="small" @click="delAuth(scope.row)" v-auth="'rule:del'">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <div>
         <span>权限管理</span>
-        <el-button text type="primary" @click="addAuth(2)">添加</el-button>
+        <el-button text type="primary" @click="addAuth(2)" v-auth="'rule:add'">添加</el-button>
       </div>
       <el-table class="table-box auth-table" :data="authData" stripe style="width: 100%">
         <el-table-column prop="title" label="权限名" width="150" />
         <el-table-column prop="name" label="权限标识" width="600" />
         <el-table-column fixed="right" label="操作" width="150">
           <template #default="scope">
-            <el-button text type="primary" size="small" @click="editAuth(scope.row)">
+            <el-button text type="primary" size="small" @click="editAuth(scope.row)" v-auth="'rule:edit'">
               编辑
             </el-button>
-            <el-button text type="primary" size="small" @click="delAuth(scope.row)">
-              删除
-            </el-button>
+            <el-button text type="primary" size="small" @click="delAuth(scope.row)" v-auth="'rule:del'">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -67,7 +63,13 @@
           <el-input v-model="formData.name" />
         </el-form-item>
         <el-form-item label="所属菜单分类" v-if="dialogType == 1">
-          <el-cascader v-model="menuGroup" :options="menuList" :props="cascaderProps" @change="cascaderChange" clearable />
+          <el-cascader
+            v-model="menuGroup"
+            :options="menuList"
+            :props="cascaderProps"
+            @change="cascaderChange"
+            clearable
+          />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -117,14 +119,13 @@ export default {
     const ruleFormRef = ref<FormInstance>();
     const rules = reactive<FormRules>({
       title: [{ required: true, message: '请输入', trigger: 'blur' }],
-      // url: [{ required: true, message: '请输入', trigger: 'blur' }],
     });
     const menuGroup = reactive([]);
 
     const cascaderProps = {
       checkStrictly: true,
       label: 'title',
-      value: 'id'
+      value: 'id',
     };
 
     const titleObj = {
@@ -140,12 +141,9 @@ export default {
 
     const dialogVisible = ref(false);
 
-    // menuList.push(...(getSession('menuTree') as never[]));
-    // console.log('menuList', menuList);
-
     const init = () => {
       getRuleList();
-    }
+    };
 
     // NOTE:菜单列表
     const getRuleList = async () => {
@@ -157,7 +155,7 @@ export default {
         menuList.length = 0;
         menuList.push(...menuParse(res.data.datas));
       }
-    }
+    };
 
     // 获取菜单下的权限
     const getTableList = async id => {
@@ -203,11 +201,12 @@ export default {
         formData[key] = null;
       }
       formData.pid = 0;
+      // 添加权限时
       if (type == 2 && unref(activeId)) {
         formData.pid = unref(activeId);
       }
       formData.is_menu = type == 1 ? 1 : 0;
-    }
+    };
 
     // 请求提交
     const submitAuth = async () => {
@@ -237,7 +236,7 @@ export default {
       } else {
         res = await proxy.$http.updateRule(formData);
       }
-      
+
       if (res.code == 200) {
         ruleFormRef.value?.resetFields();
         ElMessage({
@@ -257,22 +256,18 @@ export default {
     const cascaderChange = (val: any) => {
       console.log(val);
       formData.pid = val ? val[val.length - 1] : 0;
-    }
+    };
 
     // 删除权限菜单
-    const delAuth = async (rows) => {
+    const delAuth = async rows => {
       const id = rows.id;
-      ElMessageBox.confirm(
-        '确定是否删除?',
-        '提示',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }
-      )
+      ElMessageBox.confirm('确定是否删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
         .then(async () => {
-          const res = await proxy.$http.deleteRule({id});
+          const res = await proxy.$http.deleteRule({ id });
 
           if (res.code == 200) {
             ElMessage({
@@ -281,8 +276,8 @@ export default {
             });
             unref(activeId) && getTableList(unref(activeId));
           }
-        });
-      
+        })
+        .catch(() => {});
     };
 
     init();
@@ -308,7 +303,7 @@ export default {
       activeId,
       menuGroup,
       cascaderChange,
-      delAuth
+      delAuth,
     };
   },
 };

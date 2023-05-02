@@ -29,16 +29,40 @@ export default {
   getGroupList: (data) => {
     return http.get(`${baseUrl}/api/getGroupList${joinURLParam(data)}`, data);
   },
+  // 添加角色
+  addGroup: (data) => {
+    return http.post(`${baseUrl}/api/addGroup`, data);
+  },
   // 更新角色
   updateGroup: (data) => {
     return http.post(`${baseUrl}/api/saveGroupRule`, data);
   },
-  // 更新角色
+  // 获取角色下的权限
   getGroupRuleList: (data) => {
     return http.get(`${baseUrl}/api/getGroupRuleList` + joinURLParam(data));
   },
   // 删除权限
   deleteRule: (data) => {
     return http.get(`${baseUrl}/api/deleteRule` + joinURLParam(data));
-  }
+  },
+  // 管理员列表
+  getAdminList: (data) => {
+    return http.get(`${baseUrl}/api/getAdminList` + joinURLParam(data));
+  },
+  // 添加管理员
+  addAdmin: (data) => {
+    return http.post(`${baseUrl}/api/addAdmin`, data);
+  },
+  // 添加管理员
+  updateAdmin: (data) => {
+    return http.post(`${baseUrl}/api/updateAdmin`, data);
+  },
+  // 删除管理员账户
+  deleteAdmin: (data) => {
+    return http.get(`${baseUrl}/api/deleteAdmin` + joinURLParam(data));
+  },
+  // 删除角色
+  deleteGroup: (data) => {
+    return http.get(`${baseUrl}/api/deleteGroup` + joinURLParam(data));
+  },
 };

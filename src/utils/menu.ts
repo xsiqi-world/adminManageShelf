@@ -1,8 +1,8 @@
-export const menuParse = (list) => {
+export const menuParse = (list, isAuth = false) => {
   let map = {};
   const menuList: any[] = [];
   list.forEach(item => {
-    if (item.is_menu != 1) {
+    if (item.is_menu != 1 && !isAuth) {
       return;
     }
     if (item.pid == 0) {

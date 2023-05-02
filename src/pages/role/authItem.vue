@@ -1,6 +1,6 @@
 <template>
   <div class="tree-children" v-if="childList.length > 0">
-    <div class="tree-node" v-for="child in childList">
+    <div class="tree-node" v-for="child in childList" :key="child.id">
       <div :style="{ 'padding-left': 18 * index + 'px' }" class="tree-content">
         <!-- <el-icon><CaretRight /></el-icon> -->
         <!-- <span>test-level1-1</span> -->
@@ -95,6 +95,7 @@ export default defineComponent({
   border: 1px solid #dcdfe6;
   cursor: pointer;
   transition: all 0.3s linear;
+  overflow: hidden;
 }
 .checkbox > span {
   display: inline-flex;
@@ -125,4 +126,11 @@ export default defineComponent({
   border-left-color: transparent;
   transform: rotate(45deg);
 }
+</style>
+
+<style>
+/* .tree-children {
+  display: flex;
+  flex: 0 0 100px;
+} */
 </style>

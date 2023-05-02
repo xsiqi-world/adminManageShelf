@@ -1,7 +1,7 @@
 <template>
   <div>
     这是首页
-    <HelloWorld></HelloWorld>
+    <!-- <HelloWorld></HelloWorld> -->
   </div>
 </template>
 
