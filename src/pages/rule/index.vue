@@ -25,10 +25,24 @@
         <el-table-column prop="url" label="跳转链接" width="600" />
         <el-table-column fixed="right" label="操作" width="150">
           <template #default="scope">
-            <el-button text type="primary" size="small" @click="editMenu(scope.row)" v-auth="'rule:edit'">
+            <el-button
+              text
+              type="primary"
+              size="small"
+              @click="editMenu(scope.row)"
+              v-auth="'rule:edit'"
+            >
               编辑
             </el-button>
-            <el-button text type="primary" size="small" @click="delAuth(scope.row)" v-auth="'rule:del'">删除</el-button>
+            <el-button
+              text
+              type="primary"
+              size="small"
+              @click="delAuth(scope.row)"
+              v-auth="'rule:del'"
+            >
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -42,10 +56,24 @@
         <el-table-column prop="name" label="权限标识" width="600" />
         <el-table-column fixed="right" label="操作" width="150">
           <template #default="scope">
-            <el-button text type="primary" size="small" @click="editAuth(scope.row)" v-auth="'rule:edit'">
+            <el-button
+              text
+              type="primary"
+              size="small"
+              @click="editAuth(scope.row)"
+              v-auth="'rule:edit'"
+            >
               编辑
             </el-button>
-            <el-button text type="primary" size="small" @click="delAuth(scope.row)" v-auth="'rule:del'">删除</el-button>
+            <el-button
+              text
+              type="primary"
+              size="small"
+              @click="delAuth(scope.row)"
+              v-auth="'rule:del'"
+            >
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>

@@ -93,7 +93,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .el-menu-vertical:not(.el-menu--collapse) {
-  width: 200px;
+  min-width: 200px;
   min-height: 400px;
 }
 </style>

@@ -17,7 +17,7 @@
       </el-form-item>
 
       <el-form-item label="" labelWidth="">
-        <el-button type="primary" @click="goPrev">返回</el-button>
+        <el-button @click="goPrev">返回</el-button>
         <el-button type="primary" @click="confirmRole">提交</el-button>
       </el-form-item>
     </el-form>
@@ -44,7 +44,7 @@ export default {
     const formData: any = reactive({});
     const menuList: any[] = reactive([]);
     const formRef = ref();
-    const checkedKeys = reactive([]); // 选中权限
+    const checkedKeys: any[] = reactive([]); // 选中权限
 
     // NOTE:菜单列表
     const getRuleList = async () => {
@@ -54,7 +54,7 @@ export default {
       });
       if (res.code == 200) {
         menuList.length = 0;
-        menuList.push(...menuParse(res.data.datas));
+        menuList.push(...menuParse(res.data.datas, true));
       }
     };
 

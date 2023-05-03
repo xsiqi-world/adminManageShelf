@@ -12,6 +12,7 @@ const authDirective = () => {
       // console.log(el, vm);
     },
     mounted(el, vm) {
+      if (!vm.value) return;
       // console.log(el, vm);
       let authMap = getSession('auth');
       authMap = authMap.map(item => item.name.trim());

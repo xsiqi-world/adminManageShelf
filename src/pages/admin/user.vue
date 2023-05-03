@@ -22,10 +22,24 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作">
           <template #default="scope">
-            <el-button text type="primary" size="small" @click="editInfo(scope.row)" v-auth="'admin:edit'">
+            <el-button
+              v-if="scope.row.id != 1"
+              text
+              type="primary"
+              size="small"
+              @click="editInfo(scope.row)"
+              v-auth="'admin:edit'"
+            >
               编辑
             </el-button>
-            <el-button v-if="scope.row.id != 1" text type="primary" size="small" @click="delInfo(scope.row)" v-auth="'admin:del'">
+            <el-button
+              v-if="scope.row.id != 1"
+              text
+              type="primary"
+              size="small"
+              @click="delInfo(scope.row)"
+              v-auth="'admin:del'"
+            >
               删除
             </el-button>
           </template>
@@ -174,7 +188,7 @@ export default defineComponent({
     };
 
     // NOTE:获取字典
-    const getDictName = (row) => {
+    const getDictName = row => {
       let i = groupList.length;
       while (i--) {
         if (groupList[i].id == row.group_id) {
@@ -182,10 +196,10 @@ export default defineComponent({
         }
       }
       return '';
-    }
+    };
 
     // 删除用户
-    const delInfo = (rows) => {
+    const delInfo = rows => {
       const id = rows.id;
       ElMessageBox.confirm('确定是否删除?', '提示', {
         confirmButtonText: '确定',
@@ -202,7 +216,7 @@ export default defineComponent({
           getTableData();
         }
       });
-    }
+    };
 
     const init = () => {
       getTableData();
@@ -224,7 +238,7 @@ export default defineComponent({
       submitForm,
       delInfo,
       groupList,
-      getDictName
+      getDictName,
     };
   },
 });

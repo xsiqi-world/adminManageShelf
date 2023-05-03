@@ -41,7 +41,7 @@ declare module 'vue' {
     MenuItem: typeof import('./src/components/Menu/src/components/MenuItem.vue')['default']
     'MenuItem copy': typeof import('./src/components/Menu/MenuItem copy.vue')['default']
     SelectComp: typeof import('./src/components/FormMarking/src/components/SelectComp.vue')['default']
-    Src: typeof import('./src/components/FormMarking/src/index.vue')['default']
+    Src: typeof import('./src/components/Checkbox/src/index.vue')['default']
   }
 }
 

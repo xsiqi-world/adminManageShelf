@@ -19,13 +19,33 @@
         <el-table-column prop="remark" label="备注" />
         <el-table-column fixed="right" label="操作">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="editAuth(scope.row)" v-auth="'role:rule:edit'">
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="editAuth(scope.row)"
+              v-auth="'role:rule:edit'"
+            >
               权限分配
             </el-button>
-            <el-button link type="primary" size="small" @click="editInfo(scope.row)" v-auth="'role:edit'">
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="editInfo(scope.row)"
+              v-auth="'role:edit'"
+            >
               编辑信息
             </el-button>
-            <el-button link type="primary" size="small" @click="delInfo(scope.row)" v-auth="'role:del'">删除</el-button>
+            <el-button
+              link
+              type="primary"
+              size="small"
+              @click="delInfo(scope.row)"
+              v-auth="'role:del'"
+            >
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -90,7 +110,6 @@ import Increasing from '../../components/Increasing.vue';
 import { Pagination } from '/@/components/Pagination/index';
 import { FormInstance, FormRules, ElMessage, ElMessageBox } from 'element-plus';
 import type Node from 'element-plus/es/components/tree/src/model/node';
-import { getSession } from '/@/utils';
 import { menuParse } from '/@/utils/menu';
 import Auth from './auth.vue';
 import { useTableList } from '/@/hooks/useTable';
@@ -115,11 +134,10 @@ export default {
     const ruleFormRef = ref<FormInstance>();
     const rules = reactive<FormRules>({
       title: [{ required: true, message: '请输入', trigger: 'blur' }],
-      // url: { required: true, message: '请输入', trigger: 'blur' },
     });
     const defaultCheckedKeys: any[] = reactive([]);
-    const treeRef = ref();
-    const checkedKeys: any = reactive([]);
+    // const treeRef = ref();
+    const checkedKeys: any[] = reactive([]) as any[];
 
     const router = useRouter();
 
@@ -277,10 +295,10 @@ export default {
       rules,
       submitRole,
       authVisible,
-      treeProps,
+      // treeProps,
       menuList,
-      defaultCheckedKeys,
-      treeRef,
+      // defaultCheckedKeys,
+      // treeRef,
       checkedKeys,
       addRole,
       delInfo,

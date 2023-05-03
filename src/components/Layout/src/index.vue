@@ -134,8 +134,8 @@ onUnmounted(() => {
 }
 .home {
   display: flex;
-  width: 100vw;
-  height: 100vh;
+  // width: 100vw;
+  min-height: 100vh;
   .home-left {
     .title {
       @include back;
@@ -184,7 +184,7 @@ onUnmounted(() => {
     .main-container {
       height: 95%;
       .main {
-        height: 95%;
+        min-height: 95%;
         background: #f4f6fa;
         padding: 20px;
         .content {
